@@ -1,0 +1,5 @@
+# Arquivos a ignorar
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
