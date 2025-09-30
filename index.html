@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FatorR Enterprise™ - Plataforma Profissional de Gestão Tributária</title>
+    <title>FatorR™ - Plataforma Profissional de Gestão Tributária</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,1413 +22,8 @@
     <!-- SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
-    <style>
-        /* ==================== RESET & VARIABLES ==================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            /* Professional Color System */
-            --primary-50: #eef2ff;
-            --primary-100: #e0e7ff;
-            --primary-200: #c7d2fe;
-            --primary-300: #a5b4fc;
-            --primary-400: #818cf8;
-            --primary-500: #6366f1;
-            --primary-600: #4f46e5;
-            --primary-700: #4338ca;
-            --primary-800: #3730a3;
-            --primary-900: #312e81;
-            
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --gray-950: #030712;
-            
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            
-            /* Spacing */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            --space-3xl: 4rem;
-            
-            /* Typography */
-            --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
-            
-            /* Shadows */
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-            
-            /* Transitions */
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* Border Radius */
-            --radius-sm: 0.25rem;
-            --radius-md: 0.375rem;
-            --radius-lg: 0.5rem;
-            --radius-xl: 0.75rem;
-            --radius-2xl: 1rem;
-            --radius-full: 9999px;
-        }
-
-        /* Dark Theme Variables */
-        [data-theme="dark"] {
-            --gray-50: #030712;
-            --gray-100: #111827;
-            --gray-200: #1f2937;
-            --gray-300: #374151;
-            --gray-400: #4b5563;
-            --gray-500: #6b7280;
-            --gray-600: #9ca3af;
-            --gray-700: #d1d5db;
-            --gray-800: #e5e7eb;
-            --gray-900: #f3f4f6;
-        }
-
-        /* ==================== GLOBAL STYLES ==================== */
-        body {
-            font-family: var(--font-sans);
-            font-size: 15px;
-            line-height: 1.6;
-            color: var(--gray-900);
-            background: var(--gray-50);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            transition: background-color var(--transition-base), color var(--transition-base);
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 600;
-            line-height: 1.2;
-        }
-
-        /* ==================== LAYOUT ==================== */
-        .app-wrapper {
-            display: flex;
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* ==================== SIDEBAR ==================== */
-        .sidebar {
-            width: 260px;
-            background: var(--gray-100);
-            border-right: 1px solid var(--gray-200);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-            transition: transform var(--transition-base);
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar-header {
-            padding: var(--space-lg);
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            text-decoration: none;
-            color: var(--gray-900);
-        }
-
-        .brand-logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 1.125rem;
-        }
-
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .brand-name {
-            font-weight: 700;
-            font-size: 1.125rem;
-            color: var(--gray-900);
-        }
-
-        .brand-tagline {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: var(--space-lg);
-            overflow-y: auto;
-        }
-
-        .nav-section {
-            margin-bottom: var(--space-xl);
-        }
-
-        .nav-section-title {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: var(--space-sm);
-            padding-left: var(--space-sm);
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-lg);
-            color: var(--gray-700);
-            text-decoration: none;
-            transition: all var(--transition-fast);
-            cursor: pointer;
-            margin-bottom: var(--space-xs);
-            font-size: 0.875rem;
-            font-weight: 500;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-        }
-
-        .nav-item:hover {
-            background: var(--gray-200);
-            color: var(--gray-900);
-        }
-
-        .nav-item.active {
-            background: var(--primary-50);
-            color: var(--primary-700);
-        }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-badge {
-            margin-left: auto;
-            padding: 2px 8px;
-            background: var(--danger);
-            color: white;
-            border-radius: var(--radius-full);
-            font-size: 0.6875rem;
-            font-weight: 600;
-        }
-
-        .sidebar-footer {
-            padding: var(--space-lg);
-            border-top: 1px solid var(--gray-200);
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-sm);
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .user-menu:hover {
-            background: var(--gray-200);
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-full);
-            background: var(--primary-500);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .user-info {
-            flex: 1;
-        }
-
-        .user-name {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .user-role {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-        }
-
-        /* ==================== MAIN CONTENT ==================== */
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background: var(--gray-50);
-            transition: margin-left var(--transition-base);
-        }
-
-        @media (max-width: 1024px) {
-            .main-content {
-                margin-left: 0;
-            }
-        }
-
-        /* ==================== HEADER ==================== */
-        .header {
-            background: var(--gray-100);
-            border-bottom: 1px solid var(--gray-200);
-            padding: var(--space-md) var(--space-xl);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: var(--space-xl);
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: var(--space-lg);
-            flex: 1;
-        }
-
-        .menu-toggle {
-            display: none;
-            padding: var(--space-sm);
-            background: transparent;
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            color: var(--gray-700);
-            transition: all var(--transition-fast);
-        }
-
-        @media (max-width: 1024px) {
-            .menu-toggle {
-                display: flex;
-            }
-        }
-
-        .menu-toggle:hover {
-            background: var(--gray-200);
-            border-color: var(--gray-400);
-        }
-
-        .search-bar {
-            position: relative;
-            flex: 1;
-            max-width: 480px;
-        }
-
-        @media (max-width: 768px) {
-            .search-bar {
-                display: none;
-            }
-        }
-
-        .search-input {
-            width: 100%;
-            padding: var(--space-sm) var(--space-md) var(--space-sm) 40px;
-            background: var(--gray-50);
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-lg);
-            font-size: 0.875rem;
-            transition: all var(--transition-fast);
-            color: var(--gray-900);
-        }
-
-        .search-input:focus {
-            outline: none;
-            background: var(--gray-100);
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-400);
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-        }
-
-        .header-btn {
-            padding: var(--space-sm);
-            background: var(--gray-100);
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            color: var(--gray-700);
-            transition: all var(--transition-fast);
-            position: relative;
-        }
-
-        .header-btn:hover {
-            background: var(--gray-200);
-            border-color: var(--gray-400);
-        }
-
-        .notification-dot {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 8px;
-            height: 8px;
-            background: var(--danger);
-            border-radius: var(--radius-full);
-            border: 2px solid var(--gray-100);
-        }
-
-        /* ==================== PAGE CONTENT ==================== */
-        .page-wrapper {
-            flex: 1;
-            padding: var(--space-xl);
-        }
-
-        .page-header {
-            margin-bottom: var(--space-xl);
-        }
-
-        .page-title {
-            font-size: 1.875rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: var(--space-sm);
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-size: 0.875rem;
-            color: var(--gray-500);
-        }
-
-        .breadcrumb-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .breadcrumb-separator {
-            color: var(--gray-400);
-        }
-
-        .breadcrumb-active {
-            color: var(--primary-600);
-            font-weight: 500;
-        }
-
-        /* ==================== STATS GRID ==================== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-xl);
-        }
-
-        @media (max-width: 1024px) {
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .stat-card {
-            background: var(--gray-100);
-            border-radius: var(--radius-xl);
-            padding: var(--space-lg);
-            border: 1px solid var(--gray-200);
-            transition: all var(--transition-base);
-        }
-
-        .stat-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-        }
-
-        .stat-header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: var(--space-md);
-        }
-
-        .stat-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--gray-600);
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .stat-icon.primary {
-            background: var(--primary-100);
-            color: var(--primary-600);
-        }
-
-        .stat-icon.success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .stat-icon.warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .stat-icon.danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            line-height: 1;
-            margin-bottom: var(--space-sm);
-        }
-
-        .stat-change {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            font-size: 0.875rem;
-        }
-
-        .stat-change.positive {
-            color: var(--success);
-        }
-
-        .stat-change.negative {
-            color: var(--danger);
-        }
-
-        /* ==================== CALCULATOR ==================== */
-        .calculator-card {
-            background: var(--gray-100);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--gray-200);
-            overflow: hidden;
-            margin-bottom: var(--space-xl);
-        }
-
-        .calculator-header {
-            background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-            padding: var(--space-lg) var(--space-xl);
-            color: white;
-        }
-
-        .calculator-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: var(--space-xs);
-        }
-
-        .calculator-subtitle {
-            font-size: 0.875rem;
-            opacity: 0.9;
-        }
-
-        .calculator-tabs {
-            display: flex;
-            background: var(--gray-200);
-            border-bottom: 1px solid var(--gray-200);
-            padding: 0 var(--space-xl);
-            gap: var(--space-lg);
-            overflow-x: auto;
-        }
-
-        @media (max-width: 768px) {
-            .calculator-tabs {
-                padding: 0 var(--space-md);
-            }
-        }
-
-        .tab-btn {
-            padding: var(--space-md) 0;
-            background: transparent;
-            border: none;
-            color: var(--gray-600);
-            font-weight: 500;
-            font-size: 0.875rem;
-            cursor: pointer;
-            position: relative;
-            transition: all var(--transition-fast);
-            white-space: nowrap;
-        }
-
-        .tab-btn:hover {
-            color: var(--gray-900);
-        }
-
-        .tab-btn.active {
-            color: var(--primary-600);
-        }
-
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary-600);
-        }
-
-        .calculator-body {
-            padding: var(--space-xl);
-        }
-
-        @media (max-width: 768px) {
-            .calculator-body {
-                padding: var(--space-lg);
-            }
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn var(--transition-base);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* ==================== FORMS ==================== */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-xl);
-        }
-
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--gray-700);
-            margin-bottom: var(--space-sm);
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-        }
-
-        .required {
-            color: var(--danger);
-        }
-
-        .tooltip-icon {
-            color: var(--gray-400);
-            cursor: help;
-            font-size: 0.875rem;
-        }
-
-        .form-input,
-        .form-select {
-            padding: var(--space-sm) var(--space-md);
-            background: var(--gray-50);
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-lg);
-            font-size: 0.875rem;
-            transition: all var(--transition-fast);
-            width: 100%;
-            color: var(--gray-900);
-        }
-
-        .form-input:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .form-input.error,
-        .form-select.error {
-            border-color: var(--danger);
-        }
-
-        .form-helper {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-            margin-top: var(--space-xs);
-        }
-
-        .form-error {
-            font-size: 0.75rem;
-            color: var(--danger);
-            margin-top: var(--space-xs);
-        }
-
-        .input-group {
-            position: relative;
-            display: flex;
-        }
-
-        .input-prefix,
-        .input-suffix {
-            display: flex;
-            align-items: center;
-            padding: 0 var(--space-md);
-            background: var(--gray-200);
-            border: 1px solid var(--gray-300);
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        .input-prefix {
-            border-right: none;
-            border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-        }
-
-        .input-suffix {
-            border-left: none;
-            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-        }
-
-        .input-group .form-input {
-            border-radius: 0;
-            flex: 1;
-        }
-
-        .input-group .form-input:first-child {
-            border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-        }
-
-        .input-group .form-input:last-child {
-            border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-        }
-
-        /* ==================== BUTTONS ==================== */
-        .btn {
-            padding: var(--space-sm) var(--space-lg);
-            border: none;
-            border-radius: var(--radius-lg);
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            text-decoration: none;
-            white-space: nowrap;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-primary {
-            background: var(--primary-600);
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-700);
-        }
-
-        .btn-secondary {
-            background: var(--gray-100);
-            color: var(--gray-700);
-            border: 1px solid var(--gray-300);
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--gray-200);
-            border-color: var(--gray-400);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-lg {
-            padding: var(--space-md) var(--space-xl);
-            font-size: 0.9375rem;
-        }
-
-        .btn-sm {
-            padding: 0.375rem var(--space-md);
-            font-size: 0.8125rem;
-        }
-
-        .btn-icon {
-            padding: var(--space-sm);
-            width: 36px;
-            height: 36px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: var(--space-md);
-            flex-wrap: wrap;
-        }
-
-        /* ==================== RESULTS ==================== */
-        .results-section {
-            margin-top: var(--space-xl);
-            padding: var(--space-xl);
-            background: var(--gray-200);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--gray-200);
-            display: none;
-        }
-
-        .results-section.active {
-            display: block;
-            animation: slideUp var(--transition-slow);
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .factor-display {
-            text-align: center;
-            padding: var(--space-2xl);
-            background: var(--gray-100);
-            border-radius: var(--radius-xl);
-            margin-bottom: var(--space-xl);
-            border: 2px solid var(--gray-200);
-        }
-
-        .factor-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--gray-600);
-            margin-bottom: var(--space-sm);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .factor-value {
-            font-size: 4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1;
-            margin-bottom: var(--space-lg);
-        }
-
-        @media (max-width: 768px) {
-            .factor-value {
-                font-size: 3rem;
-            }
-        }
-
-        .factor-status {
-            display: inline-block;
-            padding: var(--space-sm) var(--space-lg);
-            border-radius: var(--radius-full);
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-
-        .factor-status.success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .factor-status.warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .factor-status.danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        /* ==================== PROGRESS BAR ==================== */
-        .progress-wrapper {
-            margin: var(--space-xl) 0;
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-sm);
-        }
-
-        .progress-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--gray-700);
-        }
-
-        .progress-value {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .progress-bar {
-            height: 12px;
-            background: var(--gray-200);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
-            border-radius: var(--radius-full);
-            transition: width var(--transition-slow) ease-out;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .progress-marker {
-            position: absolute;
-            top: -4px;
-            width: 2px;
-            height: 20px;
-            background: var(--gray-600);
-            left: 28%;
-        }
-
-        /* ==================== ANALYSIS CARDS ==================== */
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-xl);
-        }
-
-        @media (max-width: 768px) {
-            .analysis-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .analysis-card {
-            background: var(--gray-100);
-            border-radius: var(--radius-xl);
-            padding: var(--space-lg);
-            border: 1px solid var(--gray-200);
-        }
-
-        .analysis-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .analysis-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .analysis-title {
-            font-size: 0.9375rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .analysis-content {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-            line-height: 1.6;
-        }
-
-        /* ==================== TABLES ==================== */
-        .table-wrapper {
-            overflow-x: auto;
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius-xl);
-            background: var(--gray-100);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table thead {
-            background: var(--gray-200);
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .table th {
-            padding: var(--space-md);
-            text-align: left;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--gray-700);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .table td {
-            padding: var(--space-md);
-            font-size: 0.875rem;
-            color: var(--gray-900);
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .table tbody tr:hover {
-            background: var(--gray-200);
-        }
-
-        .table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* ==================== CHARTS ==================== */
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-xl);
-        }
-
-        @media (max-width: 1024px) {
-            .chart-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .chart-card {
-            background: var(--gray-100);
-            border-radius: var(--radius-xl);
-            padding: var(--space-lg);
-            border: 1px solid var(--gray-200);
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-lg);
-        }
-
-        .chart-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .chart-options {
-            display: flex;
-            gap: var(--space-sm);
-        }
-
-        .chart-option {
-            padding: 0.25rem var(--space-sm);
-            background: var(--gray-100);
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-md);
-            font-size: 0.75rem;
-            color: var(--gray-600);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .chart-option.active {
-            background: var(--primary-600);
-            color: white;
-            border-color: var(--primary-600);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-
-        /* ==================== ALERTS ==================== */
-        .alert {
-            padding: var(--space-md);
-            border-radius: var(--radius-lg);
-            margin-bottom: var(--space-lg);
-            display: flex;
-            align-items: flex-start;
-            gap: var(--space-md);
-            font-size: 0.875rem;
-        }
-
-        .alert-icon {
-            flex-shrink: 0;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .alert-content {
-            flex: 1;
-        }
-
-        .alert-title {
-            font-weight: 600;
-            margin-bottom: var(--space-xs);
-        }
-
-        .alert-info {
-            background: var(--primary-50);
-            color: var(--primary-700);
-            border: 1px solid var(--primary-200);
-        }
-
-        .alert-success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .alert-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-
-        .alert-danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        /* ==================== MODALS ==================== */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            padding: var(--space-xl);
-            overflow-y: auto;
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn var(--transition-fast);
-        }
-
-        .modal-content {
-            background: var(--gray-100);
-            border-radius: var(--radius-xl);
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow: hidden;
-            animation: slideUp var(--transition-base);
-        }
-
-        .modal-header {
-            padding: var(--space-lg) var(--space-xl);
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: var(--gray-400);
-            cursor: pointer;
-            font-size: 1.5rem;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-md);
-            transition: all var(--transition-fast);
-        }
-
-        .modal-close:hover {
-            background: var(--gray-200);
-            color: var(--gray-600);
-        }
-
-        .modal-body {
-            padding: var(--space-xl);
-            overflow-y: auto;
-            max-height: calc(90vh - 140px);
-        }
-
-        .modal-footer {
-            padding: var(--space-lg) var(--space-xl);
-            border-top: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: flex-end;
-            gap: var(--space-md);
-        }
-
-        /* ==================== LOADING ==================== */
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--gray-200);
-            border-top-color: var(--primary-600);
-            border-radius: var(--radius-full);
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-300) 50%, var(--gray-200) 75%);
-            background-size: 200% 100%;
-            animation: skeleton 1.5s infinite;
-            border-radius: var(--radius-md);
-        }
-
-        @keyframes skeleton {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* ==================== TOOLTIPS ==================== */
-        [data-tooltip] {
-            position: relative;
-            cursor: help;
-        }
-
-        [data-tooltip]:hover::before,
-        [data-tooltip]:hover::after {
-            display: block;
-        }
-
-        [data-tooltip]::before {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: var(--space-sm) var(--space-md);
-            background: var(--gray-900);
-            color: white;
-            font-size: 0.75rem;
-            border-radius: var(--radius-md);
-            white-space: nowrap;
-            display: none;
-            z-index: 1000;
-            margin-bottom: var(--space-sm);
-        }
-
-        [data-tooltip]::after {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 4px solid transparent;
-            border-top-color: var(--gray-900);
-            display: none;
-            z-index: 1000;
-        }
-
-        /* ==================== PRINT ==================== */
-        @media print {
-            .sidebar,
-            .header,
-            .btn-group,
-            .modal {
-                display: none !important;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            body {
-                background: white;
-            }
-
-            .page-wrapper {
-                padding: 0;
-            }
-        }
-
-        /* ==================== UTILITIES ==================== */
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .text-left { text-align: left; }
-
-        .mt-sm { margin-top: var(--space-sm); }
-        .mt-md { margin-top: var(--space-md); }
-        .mt-lg { margin-top: var(--space-lg); }
-        .mt-xl { margin-top: var(--space-xl); }
-
-        .mb-sm { margin-bottom: var(--space-sm); }
-        .mb-md { margin-bottom: var(--space-md); }
-        .mb-lg { margin-bottom: var(--space-lg); }
-        .mb-xl { margin-bottom: var(--space-xl); }
-
-        .hidden { display: none !important; }
-        .block { display: block !important; }
-        .flex { display: flex !important; }
-        .inline-block { display: inline-block !important; }
-
-        /* ==================== NOTIFICATIONS ==================== */
-        .notification-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            min-width: 300px;
-        }
-
-        .notification {
-            animation: slideIn 0.3s ease-out;
-            margin-bottom: var(--space-sm);
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(100%); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes slideOut {
-            from { opacity: 1; transform: translateX(0); }
-            to { opacity: 0; transform: translateX(100%); }
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Notification Container -->
@@ -1451,91 +46,90 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Principal</div>
-                    <button class="nav-item active" onclick="navigateTo('dashboard', this)">
-                        <i class="nav-icon fas fa-chart-line"></i>
+                    <button class="nav-item active" onclick="navigateTo('dashboard', this)" aria-label="Ir para Dashboard" aria-current="page">
+                        <i class="nav-icon fas fa-chart-line" aria-hidden="true"></i>
                         <span>Dashboard</span>
                     </button>
-                    <button class="nav-item" onclick="navigateTo('calculator', this)">
-                        <i class="nav-icon fas fa-calculator"></i>
+                    <button class="nav-item" onclick="navigateTo('calculator', this)" aria-label="Ir para Calculadora">
+                        <i class="nav-icon fas fa-calculator" aria-hidden="true"></i>
                         <span>Calculadora</span>
-                        <span class="nav-badge">3</span>
-                    </button>
-                    <button class="nav-item" onclick="navigateTo('companies', this)">
-                        <i class="nav-icon fas fa-building"></i>
-                        <span>Empresas</span>
-                    </button>
-                    <button class="nav-item" onclick="navigateTo('reports', this)">
-                        <i class="nav-icon fas fa-file-alt"></i>
-                        <span>Relatórios</span>
                     </button>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Análises</div>
-                    <button class="nav-item" onclick="navigateTo('simulations', this)">
-                        <i class="nav-icon fas fa-flask"></i>
-                        <span>Simulações</span>
-                    </button>
-                    <button class="nav-item" onclick="navigateTo('comparisons', this)">
-                        <i class="nav-icon fas fa-balance-scale"></i>
-                        <span>Comparativos</span>
-                    </button>
-                    <button class="nav-item" onclick="navigateTo('history', this)">
-                        <i class="nav-icon fas fa-history"></i>
+                    <button class="nav-item" onclick="navigateTo('history', this)" aria-label="Ir para Histórico">
+                        <i class="nav-icon fas fa-history" aria-hidden="true"></i>
                         <span>Histórico</span>
+                    </button>
+                    <button class="nav-item" onclick="navigateTo('companies', this)" aria-label="Ir para Empresas">
+                        <i class="nav-icon fas fa-building" aria-hidden="true"></i>
+                        <span>Empresas</span>
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Relatórios</div>
+                    <button class="nav-item" onclick="navigateTo('reports', this)" aria-label="Ir para Relatórios">
+                        <i class="nav-icon fas fa-file-alt" aria-hidden="true"></i>
+                        <span>Relatórios</span>
+                    </button>
+                    <button class="nav-item" onclick="navigateTo('simulations', this)" aria-label="Ir para Simulações">
+                        <i class="nav-icon fas fa-chart-line" aria-hidden="true"></i>
+                        <span>Simulações</span>
                     </button>
                 </div>
 
                 <div class="nav-section">
                     <div class="nav-section-title">Configurações</div>
-                    <button class="nav-item" onclick="navigateTo('settings', this)">
-                        <i class="nav-icon fas fa-cog"></i>
+                    <button class="nav-item" onclick="navigateTo('settings', this)" aria-label="Ir para Configurações">
+                        <i class="nav-icon fas fa-cog" aria-hidden="true"></i>
                         <span>Configurações</span>
                     </button>
-                    <button class="nav-item" onclick="navigateTo('help', this)">
-                        <i class="nav-icon fas fa-question-circle"></i>
+                    <button class="nav-item" onclick="navigateTo('help', this)" aria-label="Ir para Ajuda">
+                        <i class="nav-icon fas fa-question-circle" aria-hidden="true"></i>
                         <span>Ajuda</span>
                     </button>
                 </div>
             </nav>
 
             <div class="sidebar-footer">
-                <div class="user-menu" onclick="toggleUserMenu()">
+                <div class="user-menu" onclick="toggleUserMenu()" role="button" aria-label="Menu do usuário" tabindex="0">
                     <div class="user-avatar">JS</div>
                     <div class="user-info">
                         <div class="user-name">João Silva</div>
                         <div class="user-role">Contador Premium</div>
                     </div>
-                    <i class="fas fa-chevron-down" style="color: var(--gray-400);"></i>
+                    <i class="fas fa-chevron-down" style="color: var(--gray-400);" aria-hidden="true"></i>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
+            <!-- Header -->  
             <header class="header">
                 <div class="header-content">
                     <div class="header-left">
-                        <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menu">
-                            <i class="fas fa-bars"></i>
+                        <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menu" aria-expanded="false">
+                            <i class="fas fa-bars" aria-hidden="true"></i>
                         </button>
                         <div class="search-bar">
-                            <i class="fas fa-search search-icon"></i>
+                            <i class="fas fa-search search-icon" aria-hidden="true"></i>
                             <input type="text" class="search-input" placeholder="Buscar empresas, relatórios..." 
-                                   aria-label="Buscar no sistema">
+                                   aria-label="Buscar no sistema" id="search-input">
                         </div>
                     </div>
                     <div class="header-right">
-                        <button class="header-btn" aria-label="Notificações">
-                            <i class="fas fa-bell"></i>
-                            <span class="notification-dot"></span>
+                        <button class="header-btn" aria-label="Notificações" onclick="showNotifications()">
+                            <i class="fas fa-bell" aria-hidden="true"></i>
+                            <span class="notification-dot" aria-hidden="true"></span>
                         </button>
                         <button class="header-btn" onclick="toggleTheme()" aria-label="Alternar tema">
-                            <i class="fas fa-moon" id="theme-icon"></i>
+                            <i class="fas fa-moon" id="theme-icon" aria-hidden="true"></i>
                         </button>
                         <button class="header-btn" onclick="navigateTo('settings')" aria-label="Configurações">
-                            <i class="fas fa-cog"></i>
+                            <i class="fas fa-cog" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -1560,12 +154,12 @@
                             <div class="stat-header">
                                 <div class="stat-title">Fator R Médio</div>
                                 <div class="stat-icon primary">
-                                    <i class="fas fa-percentage"></i>
+                                    <i class="fas fa-percentage" aria-hidden="true"></i>
                                 </div>
                             </div>
                             <div class="stat-value">31.2%</div>
                             <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
+                                <i class="fas fa-arrow-up" aria-hidden="true"></i>
                                 <span>2.1% vs mês anterior</span>
                             </div>
                         </div>
@@ -1574,12 +168,12 @@
                             <div class="stat-header">
                                 <div class="stat-title">Economia Mensal</div>
                                 <div class="stat-icon success">
-                                    <i class="fas fa-dollar-sign"></i>
+                                    <i class="fas fa-dollar-sign" aria-hidden="true"></i>
                                 </div>
                             </div>
                             <div class="stat-value">R$ 45.280</div>
                             <div class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i>
+                                <i class="fas fa-arrow-up" aria-hidden="true"></i>
                                 <span>15% de redução</span>
                             </div>
                         </div>
@@ -1588,12 +182,12 @@
                             <div class="stat-header">
                                 <div class="stat-title">Empresas Ativas</div>
                                 <div class="stat-icon warning">
-                                    <i class="fas fa-building"></i>
+                                    <i class="fas fa-building" aria-hidden="true"></i>
                                 </div>
                             </div>
                             <div class="stat-value">18/25</div>
                             <div class="stat-change negative">
-                                <i class="fas fa-arrow-down"></i>
+                                <i class="fas fa-arrow-down" aria-hidden="true"></i>
                                 <span>2 em risco</span>
                             </div>
                         </div>
@@ -1602,12 +196,12 @@
                             <div class="stat-header">
                                 <div class="stat-title">DAS Vencendo</div>
                                 <div class="stat-icon danger">
-                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
                                 </div>
                             </div>
                             <div class="stat-value">5</div>
                             <div class="stat-change negative">
-                                <i class="fas fa-clock"></i>
+                                <i class="fas fa-clock" aria-hidden="true"></i>
                                 <span>Próximos 3 dias</span>
                             </div>
                         </div>
@@ -1619,13 +213,13 @@
                             <div class="chart-header">
                                 <h3 class="chart-title">Evolução do Fator R</h3>
                                 <div class="chart-options">
-                                    <button class="chart-option active">12M</button>
-                                    <button class="chart-option">6M</button>
-                                    <button class="chart-option">3M</button>
+                                    <button class="chart-option active" onclick="changeChartPeriod('12M')">12M</button>
+                                    <button class="chart-option" onclick="changeChartPeriod('6M')">6M</button>
+                                    <button class="chart-option" onclick="changeChartPeriod('3M')">3M</button>
                                 </div>
                             </div>
                             <div class="chart-container">
-                                <canvas id="evolutionChart"></canvas>
+                                <canvas id="evolutionChart" aria-label="Gráfico de evolução do Fator R" role="img"></canvas>
                             </div>
                         </div>
                         
@@ -1633,13 +227,64 @@
                             <div class="chart-header">
                                 <h3 class="chart-title">Comparativo de Anexos</h3>
                                 <div class="chart-options">
-                                    <button class="chart-option active">Valores</button>
-                                    <button class="chart-option">%</button>
+                                    <button class="chart-option active" onclick="changeChartType('values')">Valores</button>
+                                    <button class="chart-option" onclick="changeChartType('percentage')">%</button>
                                 </div>
                             </div>
                             <div class="chart-container">
-                                <canvas id="annexChart"></canvas>
+                                <canvas id="annexChart" aria-label="Gráfico comparativo de anexos" role="img"></canvas>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h3>Atividade Recente</h3>
+                            <button class="btn btn-secondary" onclick="navigateTo('history')">
+                                <i class="fas fa-history" aria-hidden="true"></i>
+                                Ver Todo Histórico
+                            </button>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="table" aria-label="Atividade recente de cálculos">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Data</th>
+                                        <th scope="col">Empresa</th>
+                                        <th scope="col">Receita Bruta</th>
+                                        <th scope="col">Folha</th>
+                                        <th scope="col">Fator R</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>10/06/2023</td>
+                                        <td>Empresa ABC Ltda</td>
+                                        <td>R$ 45.000,00</td>
+                                        <td>R$ 14.500,00</td>
+                                        <td>32.2%</td>
+                                        <td><span class="status completed">Anexo III</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>05/06/2023</td>
+                                        <td>Comércio XYZ ME</td>
+                                        <td>R$ 42.300,00</td>
+                                        <td>R$ 13.800,00</td>
+                                        <td>32.6%</td>
+                                        <td><span class="status completed">Anexo III</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>28/05/2023</td>
+                                        <td>Serviços 123 EIRELI</td>
+                                        <td>R$ 38.750,00</td>
+                                        <td>R$ 12.200,00</td>
+                                        <td>31.5%</td>
+                                        <td><span class="status warning">Próximo Limite</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -1658,7 +303,7 @@
                     <!-- Alert -->
                     <div class="alert alert-info">
                         <div class="alert-icon">
-                            <i class="fas fa-info-circle"></i>
+                            <i class="fas fa-info-circle" aria-hidden="true"></i>
                         </div>
                         <div class="alert-content">
                             <div class="alert-title">Como funciona o cálculo</div>
@@ -1674,36 +319,36 @@
                         </div>
 
                         <!-- Tabs -->
-                        <div class="calculator-tabs">
-                            <button class="tab-btn active" onclick="switchTab('basic', this)">
+                        <div class="calculator-tabs" role="tablist" aria-label="Tipos de cálculo">
+                            <button class="tab-btn active" onclick="switchTab('basic', this)" role="tab" aria-selected="true" aria-controls="tab-basic">
                                 Cálculo Básico
                             </button>
-                            <button class="tab-btn" onclick="switchTab('detailed', this)">
+                            <button class="tab-btn" onclick="switchTab('detailed', this)" role="tab" aria-selected="false" aria-controls="tab-detailed">
                                 Cálculo Detalhado
                             </button>
-                            <button class="tab-btn" onclick="switchTab('simulation', this)">
+                            <button class="tab-btn" onclick="switchTab('simulation', this)" role="tab" aria-selected="false" aria-controls="tab-simulation">
                                 Simulação
                             </button>
                         </div>
 
                         <div class="calculator-body">
                             <!-- Basic Tab -->
-                            <div id="tab-basic" class="tab-content active">
-                                <form id="basic-form" onsubmit="calculateFactorR(event)">
+                            <div id="tab-basic" class="tab-content active" role="tabpanel">
+                                <form id="basic-form" onsubmit="safeCalculateFactorR(event)" novalidate>
                                     <div class="form-grid">
                                         <div class="form-group">
                                             <label class="form-label" for="revenue">
                                                 Receita Bruta (12 meses)
                                                 <span class="required">*</span>
                                                 <i class="fas fa-question-circle tooltip-icon" 
-                                                   data-tooltip="Soma total das receitas dos últimos 12 meses"></i>
+                                                   data-tooltip="Soma total das receitas dos últimos 12 meses" aria-hidden="true"></i>
                                             </label>
                                             <div class="input-group">
                                                 <span class="input-prefix">R$</span>
                                                 <input type="text" class="form-input" id="revenue" required
-                                                       placeholder="0,00" onkeyup="formatCurrency(this)">
+                                                       placeholder="0,00" onkeyup="formatCurrency(this)" aria-describedby="revenue-help">
                                             </div>
-                                            <span class="form-helper">Insira o faturamento acumulado</span>
+                                            <span class="form-helper" id="revenue-help">Insira o faturamento acumulado dos últimos 12 meses</span>
                                         </div>
                                         
                                         <div class="form-group">
@@ -1711,14 +356,14 @@
                                                 Folha de Salários (12 meses)
                                                 <span class="required">*</span>
                                                 <i class="fas fa-question-circle tooltip-icon" 
-                                                   data-tooltip="Inclui salários, pró-labore, FGTS, INSS, 13º, férias"></i>
+                                                   data-tooltip="Inclui salários, pró-labore, FGTS, INSS, 13º, férias" aria-hidden="true"></i>
                                             </label>
                                             <div class="input-group">
                                                 <span class="input-prefix">R$</span>
                                                 <input type="text" class="form-input" id="payroll" required
-                                                       placeholder="0,00" onkeyup="formatCurrency(this)">
+                                                       placeholder="0,00" onkeyup="formatCurrency(this)" aria-describedby="payroll-help">
                                             </div>
-                                            <span class="form-helper">Total incluindo encargos</span>
+                                            <span class="form-helper" id="payroll-help">Total incluindo encargos trabalhistas</span>
                                         </div>
                                         
                                         <div class="form-group">
@@ -1728,7 +373,8 @@
                                             </label>
                                             <input type="text" class="form-input" id="cnpj" required
                                                    placeholder="00.000.000/0000-00" onkeyup="formatCNPJ(this)"
-                                                   maxlength="18">
+                                                   maxlength="18" aria-describedby="cnpj-help">
+                                            <span class="form-helper" id="cnpj-help">CNPJ para identificação do cálculo</span>
                                         </div>
                                         
                                         <div class="form-group">
@@ -1736,12 +382,13 @@
                                                 Atividade Principal
                                                 <span class="required">*</span>
                                             </label>
-                                            <select class="form-select" id="activity" required>
+                                            <select class="form-select" id="activity" required aria-describedby="activity-help">
                                                 <option value="">Selecione...</option>
                                                 <option value="comercio">Comércio (Anexo I)</option>
                                                 <option value="industria">Indústria (Anexo II)</option>
                                                 <option value="servicos">Serviços</option>
                                             </select>
+                                            <span class="form-helper" id="activity-help">Selecione a atividade principal da empresa</span>
                                         </div>
                                         
                                         <div class="form-group">
@@ -1749,31 +396,33 @@
                                                 Número de Funcionários
                                             </label>
                                             <input type="number" class="form-input" id="employees" 
-                                                   placeholder="0" min="0">
+                                                   placeholder="0" min="0" aria-describedby="employees-help">
+                                            <span class="form-helper" id="employees-help">Total de funcionários ativos</span>
                                         </div>
                                         
                                         <div class="form-group">
                                             <label class="form-label" for="period">
                                                 Período Base
                                             </label>
-                                            <input type="month" class="form-input" id="period">
+                                            <input type="month" class="form-input" id="period" aria-describedby="period-help">
+                                            <span class="form-helper" id="period-help">Mês de referência para o cálculo</span>
                                         </div>
                                     </div>
 
                                     <div class="btn-group">
                                         <button type="submit" class="btn btn-primary btn-lg">
-                                            <i class="fas fa-calculator"></i>
+                                            <i class="fas fa-calculator" aria-hidden="true"></i>
                                             Calcular Fator R
                                         </button>
                                         <button type="button" class="btn btn-secondary btn-lg" onclick="clearForm()">
-                                            <i class="fas fa-eraser"></i>
+                                            <i class="fas fa-eraser" aria-hidden="true"></i>
                                             Limpar
                                         </button>
                                     </div>
                                 </form>
 
                                 <!-- Results -->
-                                <div class="results-section" id="results">
+                                <div class="results-section" id="results" aria-live="polite" aria-atomic="true">
                                     <div class="factor-display">
                                         <div class="factor-label">Fator R Calculado</div>
                                         <div class="factor-value" id="factor-value">0.00%</div>
@@ -1786,8 +435,8 @@
                                             <span class="progress-value" id="progress-text">0% de 28%</span>
                                         </div>
                                         <div class="progress-bar">
-                                            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-                                            <div class="progress-marker"></div>
+                                            <div class="progress-fill" id="progress-fill" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-marker" aria-hidden="true"></div>
                                         </div>
                                     </div>
 
@@ -1795,7 +444,7 @@
                                         <div class="analysis-card">
                                             <div class="analysis-header">
                                                 <div class="analysis-icon" style="background: var(--primary-100); color: var(--primary-600);">
-                                                    <i class="fas fa-chart-line"></i>
+                                                    <i class="fas fa-chart-line" aria-hidden="true"></i>
                                                 </div>
                                                 <div class="analysis-title">Enquadramento</div>
                                             </div>
@@ -1807,7 +456,7 @@
                                         <div class="analysis-card">
                                             <div class="analysis-header">
                                                 <div class="analysis-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
-                                                    <i class="fas fa-piggy-bank"></i>
+                                                    <i class="fas fa-piggy-bank" aria-hidden="true"></i>
                                                 </div>
                                                 <div class="analysis-title">Economia</div>
                                             </div>
@@ -1819,7 +468,7 @@
                                         <div class="analysis-card">
                                             <div class="analysis-header">
                                                 <div class="analysis-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
-                                                    <i class="fas fa-lightbulb"></i>
+                                                    <i class="fas fa-lightbulb" aria-hidden="true"></i>
                                                 </div>
                                                 <div class="analysis-title">Recomendações</div>
                                             </div>
@@ -1828,18 +477,18 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    
                                     <div class="btn-group mt-xl">
                                         <button class="btn btn-primary" onclick="generatePDF()">
-                                            <i class="fas fa-file-pdf"></i>
+                                            <i class="fas fa-file-pdf" aria-hidden="true"></i>
                                             Gerar PDF
                                         </button>
                                         <button class="btn btn-secondary" onclick="exportExcel()">
-                                            <i class="fas fa-file-excel"></i>
+                                            <i class="fas fa-file-excel" aria-hidden="true"></i>
                                             Exportar Excel
                                         </button>
                                         <button class="btn btn-secondary" onclick="saveCalculation()">
-                                            <i class="fas fa-save"></i>
+                                            <i class="fas fa-save" aria-hidden="true"></i>
                                             Salvar
                                         </button>
                                     </div>
@@ -1847,10 +496,10 @@
                             </div>
 
                             <!-- Detailed Tab -->
-                            <div id="tab-detailed" class="tab-content">
+                            <div id="tab-detailed" class="tab-content" role="tabpanel" hidden>
                                 <div class="alert alert-warning">
                                     <div class="alert-icon">
-                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
                                     </div>
                                     <div class="alert-content">
                                         <div class="alert-title">Modo Contador</div>
@@ -1858,29 +507,30 @@
                                     </div>
                                 </div>
                                 
-                                <form id="detailed-form" onsubmit="calculateDetailedFactorR(event)">
+                                <form id="detailed-form" onsubmit="calculateDetailedFactorR(event)" novalidate>
                                     <div class="form-grid">
                                         <div class="form-group">
-                                            <label class="form-label">CNPJ da Empresa</label>
-                                            <input type="text" class="form-input" placeholder="00.000.000/0000-00" 
+                                            <label class="form-label" for="detailed-cnpj">CNPJ da Empresa</label>
+                                            <input type="text" class="form-input" id="detailed-cnpj" placeholder="00.000.000/0000-00" 
                                                    onkeyup="formatCNPJ(this)" maxlength="18">
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label class="form-label">Razão Social</label>
-                                            <input type="text" class="form-input" placeholder="Nome da empresa">
+                                            <label class="form-label" for="company-name">Razão Social</label>
+                                            <input type="text" class="form-input" id="company-name" placeholder="Nome da empresa">
                                         </div>
                                     </div>
 
                                     <h4 class="mb-md">Dados Mensais - Últimos 12 Meses</h4>
                                     <div class="table-wrapper mb-lg">
-                                        <table class="table">
+                                        <table class="table" aria-label="Dados mensais detalhados">
                                             <thead>
                                                 <tr>
-                                                    <th>Mês</th>
-                                                    <th>Receita Bruta</th>
-                                                    <th>Folha de Pagamento</th>
-                                                    <th>Funcionários</th>
+                                                    <th scope="col">Mês</th>
+                                                    <th scope="col">Receita Bruta</th>
+                                                    <th scope="col">Folha de Pagamento</th>
+                                                    <th scope="col">Funcionários</th>
+                                                    <th scope="col">Ações</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="monthly-data">
@@ -1891,25 +541,29 @@
 
                                     <div class="btn-group">
                                         <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-calculator"></i>
+                                            <i class="fas fa-calculator" aria-hidden="true"></i>
                                             Calcular Detalhado
                                         </button>
                                         <button type="button" class="btn btn-secondary" onclick="addMonthlyRow()">
-                                            <i class="fas fa-plus"></i>
+                                            <i class="fas fa-plus" aria-hidden="true"></i>
                                             Adicionar Mês
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="clearDetailedForm()">
+                                            <i class="fas fa-eraser" aria-hidden="true"></i>
+                                            Limpar Tudo
                                         </button>
                                     </div>
                                 </form>
                             </div>
 
                             <!-- Simulation Tab -->
-                            <div id="tab-simulation" class="tab-content">
+                            <div id="tab-simulation" class="tab-content" role="tabpanel" hidden>
                                 <h3 class="mb-lg">Simulador de Cenários</h3>
                                 
-                                <form onsubmit="runSimulation(event)">
+                                <form onsubmit="runSimulation(event)" novalidate>
                                     <div class="form-grid">
                                         <div class="form-group">
-                                            <label class="form-label">
+                                            <label class="form-label" for="sim-revenue">
                                                 Receita Atual (12 meses)
                                                 <span class="required">*</span>
                                             </label>
@@ -1921,7 +575,7 @@
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label class="form-label">
+                                            <label class="form-label" for="sim-payroll">
                                                 Folha Atual (12 meses)
                                                 <span class="required">*</span>
                                             </label>
@@ -1933,25 +587,25 @@
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label class="form-label">Projeção de Crescimento da Receita (%)</label>
+                                            <label class="form-label" for="sim-revenue-growth">Projeção de Crescimento da Receita (%)</label>
                                             <input type="number" class="form-input" id="sim-revenue-growth" 
                                                    placeholder="10" min="-100" max="500" step="0.1">
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label class="form-label">Aumento na Folha (%)</label>
+                                            <label class="form-label" for="sim-payroll-growth">Aumento na Folha (%)</label>
                                             <input type="number" class="form-input" id="sim-payroll-growth" 
                                                    placeholder="15" min="0" max="500" step="0.1">
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label class="form-label">Novas Contratações</label>
+                                            <label class="form-label" for="sim-new-hires">Novas Contratações</label>
                                             <input type="number" class="form-input" id="sim-new-hires" 
                                                    placeholder="0" min="0">
                                         </div>
                                         
                                         <div class="form-group">
-                                            <label class="form-label">Salário Médio Novas Contratações</label>
+                                            <label class="form-label" for="sim-avg-salary">Salário Médio Novas Contratações</label>
                                             <div class="input-group">
                                                 <span class="input-prefix">R$</span>
                                                 <input type="text" class="form-input" id="sim-avg-salary"
@@ -1962,17 +616,17 @@
 
                                     <div class="btn-group">
                                         <button type="submit" class="btn btn-primary btn-lg">
-                                            <i class="fas fa-chart-line"></i>
+                                            <i class="fas fa-chart-line" aria-hidden="true"></i>
                                             Simular Cenário
                                         </button>
                                         <button type="button" class="btn btn-secondary btn-lg" onclick="clearSimulation()">
-                                            <i class="fas fa-eraser"></i>
+                                            <i class="fas fa-eraser" aria-hidden="true"></i>
                                             Limpar
                                         </button>
                                     </div>
                                 </form>
 
-                                <div id="simulation-results" class="mt-xl hidden">
+                                <div id="simulation-results" class="mt-xl hidden" aria-live="polite">
                                     <!-- Results will be inserted here -->
                                 </div>
                             </div>
@@ -1980,39 +634,328 @@
                     </div>
                 </div>
 
+                <!-- History Page -->
+                <div id="history-page" class="page-content hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Histórico de Cálculos</h1>
+                        <div class="breadcrumb">
+                            <span class="breadcrumb-item">FatorR Pro</span>
+                            <span class="breadcrumb-separator">›</span>
+                            <span class="breadcrumb-item breadcrumb-active">Histórico</span>
+                        </div>
+                    </div>
+
+                    <div class="calculator-card">
+                        <div class="calculator-header">
+                            <h3 class="calculator-title">Histórico Completo</h3>
+                            <p class="calculator-subtitle">Todos os cálculos realizados no sistema</p>
+                        </div>
+                        <div class="calculator-body">
+                            <div class="table-wrapper">
+                                <table class="table" aria-label="Histórico de cálculos">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Data</th>
+                                            <th scope="col">CNPJ</th>
+                                            <th scope="col">Receita Bruta</th>
+                                            <th scope="col">Folha</th>
+                                            <th scope="col">Fator R</th>
+                                            <th scope="col">Anexo</th>
+                                            <th scope="col">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="history-table-body">
+                                        <!-- Histórico será carregado via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="btn-group mt-lg">
+                                <button class="btn btn-secondary" onclick="exportHistory()">
+                                    <i class="fas fa-download" aria-hidden="true"></i>
+                                    Exportar Histórico
+                                </button>
+                                <button class="btn btn-danger" onclick="clearHistory()">
+                                    <i class="fas fa-trash" aria-hidden="true"></i>
+                                    Limpar Histórico
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Companies Page -->
                 <div id="companies-page" class="page-content hidden">
-                    <!-- Content will be loaded dynamically -->
+                    <div class="page-header">
+                        <h1 class="page-title">Gestão de Empresas</h1>
+                        <div class="breadcrumb">
+                            <span class="breadcrumb-item">FatorR Pro</span>
+                            <span class="breadcrumb-separator">›</span>
+                            <span class="breadcrumb-item breadcrumb-active">Empresas</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-xl">
+                        <button class="btn btn-primary" onclick="openAddCompanyModal()">
+                            <i class="fas fa-plus" aria-hidden="true"></i>
+                            Nova Empresa
+                        </button>
+                        <button class="btn btn-secondary" onclick="importCompanies()">
+                            <i class="fas fa-file-import" aria-hidden="true"></i>
+                            Importar CSV
+                        </button>
+                    </div>
+
+                    <div class="calculator-card">
+                        <div class="calculator-body">
+                            <div class="table-wrapper">
+                                <table class="table" aria-label="Lista de empresas">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">CNPJ</th>
+                                            <th scope="col">Razão Social</th>
+                                            <th scope="col">Atividade</th>
+                                            <th scope="col">Fator R Atual</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="companies-table">
+                                        <!-- Empresas serão carregadas via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Reports Page -->
                 <div id="reports-page" class="page-content hidden">
-                    <!-- Content will be loaded dynamically -->
-                </div>
+                    <div class="page-header">
+                        <h1 class="page-title">Central de Relatórios</h1>
+                        <div class="breadcrumb">
+                            <span class="breadcrumb-item">FatorR Pro</span>
+                            <span class="breadcrumb-separator">›</span>
+                            <span class="breadcrumb-item breadcrumb-active">Relatórios</span>
+                        </div>
+                    </div>
 
-                <!-- Simulations Page -->
-                <div id="simulations-page" class="page-content hidden">
-                    <!-- Content will be loaded dynamically -->
-                </div>
+                    <div class="stats-grid mb-xl">
+                        <div class="stat-card" style="cursor: pointer;" onclick="generateMonthlyReport()" role="button" tabindex="0">
+                            <div class="stat-header">
+                                <div class="stat-title">Relatório Mensal</div>
+                                <div class="stat-icon primary">
+                                    <i class="fas fa-calendar" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" style="font-size: 1rem;">Gerar Relatório</div>
+                        </div>
+                        
+                        <div class="stat-card" style="cursor: pointer;" onclick="generateQuarterlyReport()" role="button" tabindex="0">
+                            <div class="stat-header">
+                                <div class="stat-title">Relatório Trimestral</div>
+                                <div class="stat-icon success">
+                                    <i class="fas fa-chart-bar" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" style="font-size: 1rem;">Gerar Relatório</div>
+                        </div>
+                        
+                        <div class="stat-card" style="cursor: pointer;" onclick="generateAnnualReport()" role="button" tabindex="0">
+                            <div class="stat-header">
+                                <div class="stat-title">Relatório Anual</div>
+                                <div class="stat-icon warning">
+                                    <i class="fas fa-chart-line" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" style="font-size: 1rem;">Gerar Relatório</div>
+                        </div>
+                        
+                        <div class="stat-card" style="cursor: pointer;" onclick="generateComparativeReport()" role="button" tabindex="0">
+                            <div class="stat-header">
+                                <div class="stat-title">Análise Comparativa</div>
+                                <div class="stat-icon danger">
+                                    <i class="fas fa-balance-scale" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" style="font-size: 1rem;">Gerar Relatório</div>
+                        </div>
+                    </div>
 
-                <!-- History Page -->
-                <div id="history-page" class="page-content hidden">
-                    <!-- Content will be loaded dynamically -->
-                </div>
-
-                <!-- Comparisons Page -->
-                <div id="comparisons-page" class="page-content hidden">
-                    <!-- Content will be loaded dynamically -->
+                    <div class="calculator-card">
+                        <div class="calculator-header">
+                            <h3 class="calculator-title">Relatórios Personalizados</h3>
+                        </div>
+                        <div class="calculator-body">
+                            <p>Selecione um tipo de relatório acima para gerar ou configure um relatório personalizado:</p>
+                            
+                            <div class="form-grid mt-lg">
+                                <div class="form-group">
+                                    <label class="form-label" for="report-start">Período Inicial</label>
+                                    <input type="month" class="form-input" id="report-start">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="report-end">Período Final</label>
+                                    <input type="month" class="form-input" id="report-end">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="report-type">Tipo de Relatório</label>
+                                    <select class="form-select" id="report-type">
+                                        <option value="detailed">Detalhado</option>
+                                        <option value="summary">Resumido</option>
+                                        <option value="comparative">Comparativo</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="report-format">Formato</label>
+                                    <select class="form-select" id="report-format">
+                                        <option value="pdf">PDF</option>
+                                        <option value="excel">Excel</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="btn-group mt-lg">
+                                <button class="btn btn-primary" onclick="generateCustomReport()">
+                                    <i class="fas fa-cog" aria-hidden="true"></i>
+                                    Gerar Relatório Personalizado
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Settings Page -->
                 <div id="settings-page" class="page-content hidden">
-                    <!-- Content will be loaded dynamically -->
+                    <div class="page-header">
+                        <h1 class="page-title">Configurações do Sistema</h1>
+                        <div class="breadcrumb">
+                            <span class="breadcrumb-item">FatorR Pro</span>
+                            <span class="breadcrumb-separator">›</span>
+                            <span class="breadcrumb-item breadcrumb-active">Configurações</span>
+                        </div>
+                    </div>
+
+                    <div class="calculator-card">
+                        <div class="calculator-header">
+                            <h3 class="calculator-title">Preferências do Usuário</h3>
+                        </div>
+                        <div class="calculator-body">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="user-name">Nome</label>
+                                    <input type="text" class="form-input" id="user-name" value="João Silva">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="user-email">Email</label>
+                                    <input type="email" class="form-input" id="user-email" value="joao.silva@email.com">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="user-company">Empresa</label>
+                                    <input type="text" class="form-input" id="user-company" value="Contabilidade ABC">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="user-phone">Telefone</label>
+                                    <input type="tel" class="form-input" id="user-phone" value="(11) 99999-9999">
+                                </div>
+                            </div>
+
+                            <h4 class="mt-xl mb-lg">Preferências de Exibição</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <input type="checkbox" id="auto-save" checked> 
+                                        Salvar automaticamente
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <input type="checkbox" id="show-tutorial"> 
+                                        Mostrar dicas
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <input type="checkbox" id="dark-mode" onchange="toggleTheme()"> 
+                                        Modo escuro
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="btn-group mt-xl">
+                                <button class="btn btn-primary" onclick="saveSettings()">
+                                    <i class="fas fa-save" aria-hidden="true"></i>
+                                    Salvar Configurações
+                                </button>
+                                <button class="btn btn-secondary" onclick="resetSettings()">
+                                    <i class="fas fa-undo" aria-hidden="true"></i>
+                                    Restaurar Padrões
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Help Page -->
                 <div id="help-page" class="page-content hidden">
-                    <!-- Content will be loaded dynamically -->
+                    <div class="page-header">
+                        <h1 class="page-title">Central de Ajuda</h1>
+                        <div class="breadcrumb">
+                            <span class="breadcrumb-item">FatorR Pro</span>
+                            <span class="breadcrumb-separator">›</span>
+                            <span class="breadcrumb-item breadcrumb-active">Ajuda</span>
+                        </div>
+                    </div>
+
+                    <div class="calculator-card">
+                        <div class="calculator-header">
+                            <h3 class="calculator-title">Como usar o FatorR Pro</h3>
+                        </div>
+                        <div class="calculator-body">
+                            <div class="help-sections">
+                                <div class="help-section">
+                                    <h4><i class="fas fa-calculator" aria-hidden="true"></i> Calculadora Básica</h4>
+                                    <p>Para calcular o Fator R rapidamente:</p>
+                                    <ol>
+                                        <li>Preencha a receita bruta dos últimos 12 meses</li>
+                                        <li>Informe a folha de pagamento total</li>
+                                        <li>Selecione a atividade da empresa</li>
+                                        <li>Clique em "Calcular Fator R"</li>
+                                    </ol>
+                                </div>
+
+                                <div class="help-section">
+                                    <h4><i class="fas fa-chart-line" aria-hidden="true"></i> Simulações</h4>
+                                    <p>Teste diferentes cenários tributários:</p>
+                                    <ul>
+                                        <li>Projeção de crescimento da receita</li>
+                                        <li>Aumentos na folha de pagamento</li>
+                                        <li>Contratações de novos funcionários</li>
+                                        <li>Análise de impacto no Fator R</li>
+                                    </ul>
+                                </div>
+
+                                <div class="help-section">
+                                    <h4><i class="fas fa-file-export" aria-hidden="true"></i> Exportação</h4>
+                                    <p>Exporte seus resultados em diferentes formatos:</p>
+                                    <ul>
+                                        <li><strong>PDF:</strong> Relatórios completos para impressão</li>
+                                        <li><strong>Excel:</strong> Dados brutos para análise</li>
+                                        <li><strong>Histórico:</strong> Backup de todos os cálculos</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info mt-xl">
+                                <div class="alert-icon">
+                                    <i class="fas fa-life-ring" aria-hidden="true"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title">Precisa de mais ajuda?</div>
+                                    <div>Entre em contato com nosso suporte: suporte@fatorrpro.com.br</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -2024,7 +967,7 @@
             <div class="modal-header">
                 <h3 class="modal-title" id="modal-title">Título</h3>
                 <button class="modal-close" onclick="closeModal()" aria-label="Fechar modal">
-                    <i class="fas fa-times"></i>
+                    <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
             </div>
             <div class="modal-body" id="modal-body">
@@ -2041,1469 +984,29 @@
     <div class="modal" id="user-menu-modal">
         <div class="modal-content" style="max-width: 300px;">
             <div class="modal-body">
-                <div class="nav-item" onclick="navigateTo('settings')">
-                    <i class="nav-icon fas fa-cog"></i>
+                <div class="nav-item" onclick="navigateTo('settings')" role="button" tabindex="0">
+                    <i class="nav-icon fas fa-cog" aria-hidden="true"></i>
                     <span>Configurações</span>
                 </div>
-                <div class="nav-item" onclick="showUserProfile()">
-                    <i class="nav-icon fas fa-user"></i>
+                <div class="nav-item" onclick="showUserProfile()" role="button" tabindex="0">
+                    <i class="nav-icon fas fa-user" aria-hidden="true"></i>
                     <span>Meu Perfil</span>
                 </div>
-                <div class="nav-item" onclick="logout()">
-                    <i class="nav-icon fas fa-sign-out-alt"></i>
+                <div class="nav-item" onclick="logout()" role="button" tabindex="0">
+                    <i class="nav-icon fas fa-sign-out-alt" aria-hidden="true"></i>
                     <span>Sair</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // ==================== STATE MANAGEMENT ====================
-        const AppState = {
-            currentPage: 'dashboard',
-            calculations: [],
-            companies: [],
-            theme: 'light',
-            charts: {},
-            currentModal: null
-        };
-
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
-        });
-
-        function initializeApp() {
-            loadSavedData();
-            setCurrentDate();
-            initializeCharts();
-            setupEventListeners();
-            generateMonthlyTable();
-        }
-
-        function setupEventListeners() {
-            // Close modal when clicking outside
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('modal')) {
-                    closeModal();
-                }
-            });
-
-            // Close modal with ESC key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeModal();
-                }
-            });
-
-            // Search functionality
-            const searchInput = document.querySelector('.search-input');
-            if (searchInput) {
-                searchInput.addEventListener('input', function(e) {
-                    performSearch(e.target.value);
-                });
-            }
-        }
-
-        function setCurrentDate() {
-            const periodInput = document.getElementById('period');
-            if (periodInput) {
-                const today = new Date();
-                const month = today.toISOString().slice(0, 7);
-                periodInput.value = month;
-            }
-        }
-
-        // ==================== NAVIGATION ====================
-        function navigateTo(page, element) {
-            // Hide all pages
-            document.querySelectorAll('.page-content').forEach(p => {
-                p.classList.add('hidden');
-            });
-            
-            // Check if it's a standard page or needs to be loaded dynamically
-            const pageElement = document.getElementById(`${page}-page`);
-            if (pageElement) {
-                pageElement.classList.remove('hidden');
-            } else {
-                // Load custom pages dynamically
-                switch(page) {
-                    case 'companies':
-                        loadCompaniesPage();
-                        break;
-                    case 'reports':
-                        loadReportsPage();
-                        break;
-                    case 'simulations':
-                        loadSimulationsPage();
-                        break;
-                    case 'history':
-                        loadHistoryPage();
-                        break;
-                    case 'comparisons':
-                        loadComparisonsPage();
-                        break;
-                    case 'settings':
-                        loadSettingsPage();
-                        break;
-                    case 'help':
-                        loadHelpPage();
-                        break;
-                    default:
-                        document.getElementById('dashboard-page').classList.remove('hidden');
-                        showNotification('Página em desenvolvimento', 'info');
-                }
-            }
-            
-            // Update nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            if (element) {
-                element.classList.add('active');
-            }
-            
-            AppState.currentPage = page;
-            
-            // Close mobile sidebar
-            if (window.innerWidth <= 1024) {
-                document.getElementById('sidebar').classList.remove('active');
-            }
-
-            // Update browser history
-            history.pushState({ page }, '', `#${page}`);
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-        }
-
-        function toggleTheme() {
-            const body = document.body;
-            const icon = document.getElementById('theme-icon');
-            
-            if (AppState.theme === 'light') {
-                AppState.theme = 'dark';
-                body.setAttribute('data-theme', 'dark');
-                icon.className = 'fas fa-sun';
-            } else {
-                AppState.theme = 'light';
-                body.removeAttribute('data-theme');
-                icon.className = 'fas fa-moon';
-            }
-            
-            localStorage.setItem('theme', AppState.theme);
-            showNotification(`Tema ${AppState.theme === 'light' ? 'claro' : 'escuro'} ativado`, 'success');
-        }
-
-        function toggleUserMenu() {
-            const modal = document.getElementById('user-menu-modal');
-            modal.classList.toggle('active');
-        }
-
-        // ==================== TAB SWITCHING ====================
-        function switchTab(tabName, element) {
-            // Update tabs
-            document.querySelectorAll('.tab-btn').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            element.classList.add('active');
-            
-            // Update content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-        }
-
-        // ==================== FORM FUNCTIONS ====================
-        function formatCurrency(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value === '') {
-                input.value = '';
-                return;
-            }
-            
-            value = (parseInt(value) / 100).toFixed(2);
-            value = value.replace('.', ',');
-            value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-            input.value = value;
-        }
-
-        function formatCNPJ(input) {
-            let value = input.value.replace(/\D/g, '');
-            
-            if (value.length <= 14) {
-                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
-                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
-                value = value.replace(/(\d{4})(\d)/, '$1-$2');
-            }
-            
-            input.value = value;
-        }
-
-        function parseCurrency(value) {
-            if (!value) return 0;
-            return parseFloat(value.replace(/\./g, '').replace(',', '.'));
-        }
-
-        function validateCNPJ(cnpj) {
-            cnpj = cnpj.replace(/[^\d]+/g, '');
-            
-            if (cnpj === '') return false;
-            if (cnpj.length !== 14) return false;
-            
-            // Elimina CNPJs invalidos conhecidos
-            if (cnpj === "00000000000000" || 
-                cnpj === "11111111111111" || 
-                cnpj === "22222222222222" || 
-                cnpj === "33333333333333" || 
-                cnpj === "44444444444444" || 
-                cnpj === "55555555555555" || 
-                cnpj === "66666666666666" || 
-                cnpj === "77777777777777" || 
-                cnpj === "88888888888888" || 
-                cnpj === "99999999999999")
-                return false;
-                
-            // Valida DVs
-            let tamanho = cnpj.length - 2;
-            let numeros = cnpj.substring(0, tamanho);
-            let digitos = cnpj.substring(tamanho);
-            let soma = 0;
-            let pos = tamanho - 7;
-            
-            for (let i = tamanho; i >= 1; i--) {
-                soma += numeros.charAt(tamanho - i) * pos--;
-                if (pos < 2) pos = 9;
-            }
-            
-            let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-            if (resultado != digitos.charAt(0)) return false;
-            
-            tamanho = tamanho + 1;
-            numeros = cnpj.substring(0, tamanho);
-            soma = 0;
-            pos = tamanho - 7;
-            
-            for (let i = tamanho; i >= 1; i--) {
-                soma += numeros.charAt(tamanho - i) * pos--;
-                if (pos < 2) pos = 9;
-            }
-            
-            resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-            if (resultado != digitos.charAt(1)) return false;
-            
-            return true;
-        }
-
-        // ==================== CALCULATION ====================
-        function calculateFactorR(event) {
-            event.preventDefault();
-            
-            const revenue = parseCurrency(document.getElementById('revenue').value);
-            const payroll = parseCurrency(document.getElementById('payroll').value);
-            const cnpj = document.getElementById('cnpj').value;
-            const activity = document.getElementById('activity').value;
-            const employees = parseInt(document.getElementById('employees').value) || 0;
-            const period = document.getElementById('period').value;
-            
-            // Validate
-            if (revenue === 0) {
-                showNotification('Insira a receita bruta', 'warning');
-                return;
-            }
-
-            if (payroll === 0) {
-                showNotification('Insira a folha de salários', 'warning');
-                return;
-            }
-
-            if (revenue < payroll) {
-                showNotification('A receita bruta não pode ser menor que a folha de salários', 'warning');
-                return;
-            }
-
-            if (cnpj && !validateCNPJ(cnpj)) {
-                showNotification('CNPJ inválido', 'warning');
-                return;
-            }
-            
-            // Calculate
-            const factorR = (payroll / revenue * 100).toFixed(2);
-            
-            // Show results
-            displayResults(factorR, revenue, payroll, activity, employees);
-            
-            // Save calculation
-            const calculation = {
-                id: Date.now(),
-                date: new Date().toISOString(),
-                cnpj: cnpj,
-                revenue: revenue,
-                payroll: payroll,
-                employees: employees,
-                activity: activity,
-                period: period,
-                factorR: factorR
-            };
-            
-            AppState.calculations.push(calculation);
-            saveToLocalStorage();
-        }
-
-        function calculateDetailedFactorR(event) {
-            event.preventDefault();
-            showNotification('Cálculo detalhado em desenvolvimento', 'info');
-        }
-
-        function displayResults(factorR, revenue, payroll, activity, employees) {
-            const resultsSection = document.getElementById('results');
-            resultsSection.classList.add('active');
-            
-            // Scroll to results
-            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            
-            // Update factor value
-            document.getElementById('factor-value').textContent = `${factorR}%`;
-            
-            // Update status
-            const statusElement = document.getElementById('factor-status');
-            const factor = parseFloat(factorR);
-            
-            if (factor >= 28) {
-                statusElement.textContent = 'Anexo III - Alíquota Reduzida';
-                statusElement.className = 'factor-status success';
-            } else if (factor >= 20) {
-                statusElement.textContent = 'Próximo ao Anexo III';
-                statusElement.className = 'factor-status warning';
-            } else {
-                statusElement.textContent = 'Anexo V - Alíquota Maior';
-                statusElement.className = 'factor-status danger';
-            }
-            
-            // Update progress
-            const progress = Math.min((factor / 28) * 100, 100);
-            document.getElementById('progress-fill').style.width = `${progress}%`;
-            document.getElementById('progress-text').textContent = `${factorR}% de 28%`;
-            
-            // Update analysis
-            updateAnalysis(factorR, revenue, payroll, activity, employees);
-        }
-
-        function updateAnalysis(factorR, revenue, payroll, activity, employees) {
-            const factor = parseFloat(factorR);
-            
-            // Tax Analysis
-            let taxAnalysis = '';
-            if (activity === 'servicos') {
-                if (factor >= 28) {
-                    taxAnalysis = 'Sua empresa está enquadrada no <strong>Anexo III</strong> com alíquotas reduzidas (6% a 33%).';
-                } else {
-                    taxAnalysis = 'Sua empresa está no <strong>Anexo V</strong> com alíquotas maiores (15,5% a 30,5%).';
-                }
-            } else {
-                taxAnalysis = `Empresa enquadrada no anexo específico para ${activity}.`;
-            }
-            document.getElementById('tax-analysis').innerHTML = taxAnalysis;
-            
-            // Savings Analysis
-            let savings = 0;
-            let savingsText = '';
-            if (activity === 'servicos') {
-                if (factor < 28) {
-                    // Estimativa simplificada da economia potencial
-                    const currentTax = revenue * 0.18; // Estimativa Anexo V
-                    const potentialTax = revenue * 0.12; // Estimativa Anexo III
-                    savings = currentTax - potentialTax;
-                    savingsText = `Economia potencial: <strong>R$ ${savings.toLocaleString('pt-BR', {minimumFractionDigits: 2})} por ano</strong>`;
-                } else {
-                    savingsText = 'Você já está no melhor enquadramento tributário!';
-                }
-            } else {
-                savingsText = 'O Fator R é mais relevante para empresas de serviços.';
-            }
-            document.getElementById('savings-analysis').innerHTML = savingsText;
-            
-            // Recommendations
-            let recommendations = '';
-            if (factor < 28 && activity === 'servicos') {
-                const neededPayroll = (0.28 * revenue) - payroll;
-                recommendations = `
-                    <p><strong>Para atingir o Anexo III (28%):</strong></p>
-                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
-                        <li>Aumente a folha em <strong>R$ ${neededPayroll.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></li>
-                        <li>Considere aumentar o pró-labore dos sócios</li>
-                        <li>Avalie novas contratações estratégicas</li>
-                        <li>Registre todos os benefícios e encargos</li>
-                    </ul>
-                `;
-            } else if (factor >= 28) {
-                recommendations = `
-                    <p><strong>Recomendações para manter o benefício:</strong></p>
-                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
-                        <li>Monitore mensalmente o Fator R</li>
-                        <li>Mantenha o controle rigoroso da folha</li>
-                        <li>Planeje aumentos de forma estratégica</li>
-                        <li>Considere a sazonalidade do negócio</li>
-                    </ul>
-                `;
-            } else {
-                recommendations = 'Mantenha o acompanhamento regular do Fator R.';
-            }
-            document.getElementById('recommendations').innerHTML = recommendations;
-        }
-
-        function clearForm() {
-            document.getElementById('basic-form').reset();
-            document.getElementById('results').classList.remove('active');
-            showNotification('Formulário limpo', 'info');
-        }
-
-        // ==================== MONTHLY TABLE ====================
-        function generateMonthlyTable() {
-            const months = [
-                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-            ];
-            
-            const currentYear = new Date().getFullYear();
-            const tbody = document.getElementById('monthly-data');
-            tbody.innerHTML = '';
-            
-            for (let i = 11; i >= 0; i--) {
-                const date = new Date(currentYear, new Date().getMonth() - i, 1);
-                const monthName = months[date.getMonth()];
-                const year = date.getFullYear();
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${monthName}/${year}</td>
-                    <td>
-                        <div class="input-group" style="max-width: 150px;">
-                            <span class="input-prefix">R$</span>
-                            <input type="text" class="form-input" placeholder="0,00" onkeyup="formatCurrency(this)">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-group" style="max-width: 150px;">
-                            <span class="input-prefix">R$</span>
-                            <input type="text" class="form-input" placeholder="0,00" onkeyup="formatCurrency(this)">
-                        </div>
-                    </td>
-                    <td>
-                        <input type="number" class="form-input" style="max-width: 100px;" placeholder="0" min="0">
-                    </td>
-                `;
-                tbody.appendChild(row);
-            }
-        }
-
-        function addMonthlyRow() {
-            const tbody = document.getElementById('monthly-data');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>
-                    <input type="month" class="form-input">
-                </td>
-                <td>
-                    <div class="input-group" style="max-width: 150px;">
-                        <span class="input-prefix">R$</span>
-                        <input type="text" class="form-input" placeholder="0,00" onkeyup="formatCurrency(this)">
-                    </div>
-                </td>
-                <td>
-                    <div class="input-group" style="max-width: 150px;">
-                        <span class="input-prefix">R$</span>
-                        <input type="text" class="form-input" placeholder="0,00" onkeyup="formatCurrency(this)">
-                    </div>
-                </td>
-                <td>
-                    <input type="number" class="form-input" style="max-width: 100px;" placeholder="0" min="0">
-                </td>
-            `;
-            tbody.appendChild(row);
-        }
-
-        // ==================== CHARTS ====================
-        function initializeCharts() {
-            // Evolution Chart
-            const evolutionCtx = document.getElementById('evolutionChart');
-            if (evolutionCtx) {
-                AppState.charts.evolution = new Chart(evolutionCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                        datasets: [{
-                            label: 'Fator R (%)',
-                            data: [25, 26, 27, 26.5, 28, 29, 30, 31, 30.5, 31, 31.5, 31.2],
-                            borderColor: '#6366f1',
-                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }, {
-                            label: 'Meta (28%)',
-                            data: new Array(12).fill(28),
-                            borderColor: '#10b981',
-                            borderDash: [5, 5],
-                            fill: false,
-                            pointRadius: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            tooltip: {
-                                mode: 'index',
-                                intersect: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: false,
-                                min: 20,
-                                max: 35
-                            }
-                        }
-                    }
-                });
-            }
-            
-            // Annex Chart
-            const annexCtx = document.getElementById('annexChart');
-            if (annexCtx) {
-                AppState.charts.annex = new Chart(annexCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Anexo I', 'Anexo II', 'Anexo III', 'Anexo IV', 'Anexo V'],
-                        datasets: [{
-                            label: 'Alíquota Média (%)',
-                            data: [6, 8, 12, 10, 20],
-                            backgroundColor: [
-                                '#6366f1', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Alíquota (%)'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        // ==================== EXPORT FUNCTIONS ====================
-        function generatePDF() {
-            if (typeof window.jspdf === 'undefined') {
-                showNotification('Erro: Biblioteca jsPDF não carregada', 'danger');
-                return;
-            }
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            const lastCalc = AppState.calculations[AppState.calculations.length - 1];
-            if (!lastCalc) {
-                showNotification('Nenhum cálculo para exportar', 'warning');
-                return;
-            }
-            
-            // Header
-            doc.setFontSize(22);
-            doc.setTextColor(99, 102, 241);
-            doc.text('RELATÓRIO DO FATOR R', 105, 20, { align: 'center' });
-            
-            doc.setFontSize(12);
-            doc.setTextColor(100, 100, 100);
-            doc.text('Sistema Profissional de Análise Tributária', 105, 28, { align: 'center' });
-            
-            // Line separator
-            doc.setDrawColor(200, 200, 200);
-            doc.line(20, 35, 190, 35);
-            
-            // Company info
-            doc.setFontSize(11);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Data: ${new Date(lastCalc.date).toLocaleDateString('pt-BR')}`, 20, 45);
-            doc.text(`CNPJ: ${lastCalc.cnpj || 'Não informado'}`, 20, 52);
-            doc.text(`Atividade: ${lastCalc.activity}`, 20, 59);
-            
-            // Main Result Box
-            doc.setFillColor(99, 102, 241);
-            doc.rect(20, 70, 170, 30, 'F');
-            
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(18);
-            doc.text('FATOR R CALCULADO', 105, 82, { align: 'center' });
-            doc.setFontSize(24);
-            doc.text(`${lastCalc.factorR}%`, 105, 94, { align: 'center' });
-            
-            // Financial Data
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(13);
-            doc.setFont(undefined, 'bold');
-            doc.text('Dados Financeiros', 20, 115);
-            
-            doc.setFont(undefined, 'normal');
-            doc.setFontSize(11);
-            doc.text(`Receita Bruta (12 meses): R$ ${lastCalc.revenue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 25, 125);
-            doc.text(`Folha de Salários (12 meses): R$ ${lastCalc.payroll.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, 25, 132);
-            doc.text(`Número de Funcionários: ${lastCalc.employees || 'Não informado'}`, 25, 139);
-            
-            // Tax Analysis
-            doc.setFontSize(13);
-            doc.setFont(undefined, 'bold');
-            doc.text('Análise Tributária', 20, 155);
-            
-            doc.setFont(undefined, 'normal');
-            doc.setFontSize(11);
-            const annex = parseFloat(lastCalc.factorR) >= 28 ? 'Anexo III' : 'Anexo V';
-            const rate = parseFloat(lastCalc.factorR) >= 28 ? '6% a 33%' : '15,5% a 30,5%';
-            doc.text(`Enquadramento: ${annex}`, 25, 165);
-            doc.text(`Faixa de Alíquota: ${rate}`, 25, 172);
-            
-            // Recommendations
-            doc.setFontSize(13);
-            doc.setFont(undefined, 'bold');
-            doc.text('Recomendações', 20, 188);
-            
-            doc.setFont(undefined, 'normal');
-            doc.setFontSize(10);
-            if (parseFloat(lastCalc.factorR) >= 28) {
-                doc.text('✓ Mantenha o Fator R acima de 28% para continuar no Anexo III', 25, 198);
-                doc.text('✓ Monitore mensalmente para evitar quedas', 25, 205);
-                doc.text('✓ Considere estratégias de retenção de funcionários', 25, 212);
-            } else {
-                const needed = (0.28 * lastCalc.revenue - lastCalc.payroll);
-                doc.text(`• Aumente a folha em R$ ${needed.toLocaleString('pt-BR', {minimumFractionDigits: 2})} para atingir 28%`, 25, 198);
-                doc.text('• Considere aumentar o pró-labore dos sócios', 25, 205);
-                doc.text('• Avalie novas contratações estratégicas', 25, 212);
-            }
-            
-            // Footer
-            doc.setFontSize(8);
-            doc.setTextColor(150, 150, 150);
-            doc.text('Relatório gerado por FatorR Pro Enterprise - www.fatorrpro.com.br', 105, 280, { align: 'center' });
-            doc.text(`Página 1 de 1`, 105, 285, { align: 'center' });
-            
-            // Save
-            const fileName = `relatorio-fator-r-${new Date().toISOString().slice(0, 10)}.pdf`;
-            doc.save(fileName);
-            showNotification('PDF gerado com sucesso!', 'success');
-        }
-
-        function exportExcel() {
-            const lastCalc = AppState.calculations[AppState.calculations.length - 1];
-            if (!lastCalc) {
-                showNotification('Nenhum cálculo para exportar', 'warning');
-                return;
-            }
-            
-            // Create workbook
-            const wb = XLSX.utils.book_new();
-            
-            // Main sheet data
-            const mainData = [
-                ['RELATÓRIO DO FATOR R'],
-                [],
-                ['Data', new Date(lastCalc.date).toLocaleDateString('pt-BR')],
-                ['CNPJ', lastCalc.cnpj || 'Não informado'],
-                ['Atividade', lastCalc.activity],
-                [],
-                ['DADOS FINANCEIROS'],
-                ['Receita Bruta (12 meses)', lastCalc.revenue],
-                ['Folha de Salários (12 meses)', lastCalc.payroll],
-                ['Número de Funcionários', lastCalc.employees || 0],
-                [],
-                ['RESULTADO'],
-                ['Fator R', `${lastCalc.factorR}%`],
-                ['Anexo', parseFloat(lastCalc.factorR) >= 28 ? 'III' : 'V'],
-                [],
-                ['ANÁLISE'],
-                ['Status', parseFloat(lastCalc.factorR) >= 28 ? 'Favorável - Anexo III' : 'Desfavorável - Anexo V']
-            ];
-            
-            const ws = XLSX.utils.aoa_to_sheet(mainData);
-            XLSX.utils.book_append_sheet(wb, ws, 'Fator R');
-            
-            // History sheet
-            if (AppState.calculations.length > 1) {
-                const historyData = [
-                    ['Data', 'CNPJ', 'Receita', 'Folha', 'Fator R', 'Anexo']
-                ];
-                
-                AppState.calculations.forEach(calc => {
-                    historyData.push([
-                        new Date(calc.date).toLocaleDateString('pt-BR'),
-                        calc.cnpj || 'N/A',
-                        calc.revenue,
-                        calc.payroll,
-                        `${calc.factorR}%`,
-                        parseFloat(calc.factorR) >= 28 ? 'III' : 'V'
-                    ]);
-                });
-                
-                const wsHistory = XLSX.utils.aoa_to_sheet(historyData);
-                XLSX.utils.book_append_sheet(wb, wsHistory, 'Histórico');
-            }
-            
-            // Save file
-            const fileName = `fator-r-${new Date().toISOString().slice(0, 10)}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-            showNotification('Excel exportado com sucesso!', 'success');
-        }
-
-        function saveCalculation() {
-            if (AppState.calculations.length === 0) {
-                showNotification('Nenhum cálculo para salvar', 'warning');
-                return;
-            }
-            
-            saveToLocalStorage();
-            showNotification('Cálculo salvo com sucesso!', 'success');
-        }
-
-        // ==================== SIMULATION FUNCTIONS ====================
-        function runSimulation(event) {
-            event.preventDefault();
-            
-            const currentRevenue = parseCurrency(document.getElementById('sim-revenue').value);
-            const currentPayroll = parseCurrency(document.getElementById('sim-payroll').value);
-            const revenueGrowth = parseFloat(document.getElementById('sim-revenue-growth').value) || 0;
-            const payrollGrowth = parseFloat(document.getElementById('sim-payroll-growth').value) || 0;
-            const newHires = parseInt(document.getElementById('sim-new-hires').value) || 0;
-            const avgSalary = parseCurrency(document.getElementById('sim-avg-salary').value) || 0;
-            
-            // Validate
-            if (currentRevenue === 0 || currentPayroll === 0) {
-                showNotification('Preencha a receita e folha atuais', 'warning');
-                return;
-            }
-            
-            // Calculate projections
-            const projectedRevenue = currentRevenue * (1 + revenueGrowth / 100);
-            const additionalPayroll = newHires * avgSalary * 13; // 13 months (including 13th salary)
-            const projectedPayroll = currentPayroll * (1 + payrollGrowth / 100) + additionalPayroll;
-            
-            const currentFactorR = (currentPayroll / currentRevenue * 100).toFixed(2);
-            const projectedFactorR = (projectedPayroll / projectedRevenue * 100).toFixed(2);
-            
-            // Display results
-            displaySimulationResults(currentFactorR, projectedFactorR, currentRevenue, projectedRevenue, currentPayroll, projectedPayroll);
-        }
-
-        function displaySimulationResults(currentFactorR, projectedFactorR, currentRevenue, projectedRevenue, currentPayroll, projectedPayroll) {
-            const resultsDiv = document.getElementById('simulation-results');
-            const resultsHTML = `
-                <h3 class="mb-lg">Resultado da Simulação</h3>
-                
-                <div class="analysis-grid">
-                    <div class="analysis-card">
-                        <div class="analysis-header">
-                            <div class="analysis-icon" style="background: var(--primary-100); color: var(--primary-600);">
-                                <i class="fas fa-chart-bar"></i>
-                            </div>
-                            <div class="analysis-title">Cenário Atual</div>
-                        </div>
-                        <div class="analysis-content">
-                            <p><strong>Fator R: ${currentFactorR}%</strong></p>
-                            <p>Receita: R$ ${currentRevenue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
-                            <p>Folha: R$ ${currentPayroll.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
-                            <p>Anexo: ${currentFactorR >= 28 ? 'III' : 'V'}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="analysis-card">
-                        <div class="analysis-header">
-                            <div class="analysis-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div class="analysis-title">Cenário Projetado</div>
-                        </div>
-                        <div class="analysis-content">
-                            <p><strong>Fator R: ${projectedFactorR}%</strong></p>
-                            <p>Receita: R$ ${projectedRevenue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
-                            <p>Folha: R$ ${projectedPayroll.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
-                            <p>Anexo: ${projectedFactorR >= 28 ? 'III' : 'V'}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="analysis-card">
-                        <div class="analysis-header">
-                            <div class="analysis-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
-                                <i class="fas fa-lightbulb"></i>
-                            </div>
-                            <div class="analysis-title">Análise</div>
-                        </div>
-                        <div class="analysis-content">
-                            ${projectedFactorR >= 28 ? 
-                                '<p style="color: var(--success);"><strong>✓ Cenário favorável!</strong> O Fator R permanece acima de 28%.</p>' :
-                                '<p style="color: var(--danger);"><strong>⚠ Atenção!</strong> O Fator R ficará abaixo de 28%.</p>'
-                            }
-                            <p>Variação do Fator R: ${(projectedFactorR - currentFactorR).toFixed(2)} pontos</p>
-                            ${projectedFactorR < 28 ? 
-                                `<p>Folha adicional necessária: R$ ${((0.28 * projectedRevenue) - projectedPayroll).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>` : ''
-                            }
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            resultsDiv.innerHTML = resultsHTML;
-            resultsDiv.classList.remove('hidden');
-            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-
-        function clearSimulation() {
-            document.getElementById('sim-revenue').value = '';
-            document.getElementById('sim-payroll').value = '';
-            document.getElementById('sim-revenue-growth').value = '';
-            document.getElementById('sim-payroll-growth').value = '';
-            document.getElementById('sim-new-hires').value = '';
-            document.getElementById('sim-avg-salary').value = '';
-            document.getElementById('simulation-results').classList.add('hidden');
-            showNotification('Simulação limpa', 'info');
-        }
-
-        // ==================== STORAGE ====================
-        function saveToLocalStorage() {
-            localStorage.setItem('fatorrpro_calculations', JSON.stringify(AppState.calculations));
-            localStorage.setItem('fatorrpro_companies', JSON.stringify(AppState.companies));
-        }
-
-        function loadSavedData() {
-            const savedCalculations = localStorage.getItem('fatorrpro_calculations');
-            const savedCompanies = localStorage.getItem('fatorrpro_companies');
-            const savedTheme = localStorage.getItem('theme');
-            
-            if (savedCalculations) {
-                AppState.calculations = JSON.parse(savedCalculations);
-            }
-            
-            if (savedCompanies) {
-                AppState.companies = JSON.parse(savedCompanies);
-            }
-            
-            if (savedTheme === 'dark') {
-                AppState.theme = 'dark';
-                document.body.setAttribute('data-theme', 'dark');
-                document.getElementById('theme-icon').className = 'fas fa-sun';
-            }
-        }
-
-        // ==================== NOTIFICATIONS ====================
-        function showNotification(message, type = 'info') {
-            const container = document.getElementById('notification-container');
-            const notification = document.createElement('div');
-            notification.className = `alert alert-${type} notification`;
-            
-            const icons = {
-                info: 'info-circle',
-                success: 'check-circle',
-                warning: 'exclamation-triangle',
-                danger: 'exclamation-circle'
-            };
-            
-            notification.innerHTML = `
-                <div class="alert-icon">
-                    <i class="fas fa-${icons[type]}"></i>
-                </div>
-                <div class="alert-content">${message}</div>
-            `;
-            
-            container.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-out';
-                setTimeout(() => notification.remove(), 300);
-            }, 5000);
-        }
-
-        // ==================== MODAL FUNCTIONS ====================
-        function showModal(title, content, onConfirm = null) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-body').innerHTML = content;
-            AppState.currentModal = { onConfirm };
-            document.getElementById('modal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-            document.getElementById('user-menu-modal').classList.remove('active');
-            AppState.currentModal = null;
-        }
-
-        function confirmModal() {
-            if (AppState.currentModal && AppState.currentModal.onConfirm) {
-                AppState.currentModal.onConfirm();
-            }
-            closeModal();
-        }
-
-        // ==================== SEARCH FUNCTIONALITY ====================
-        function performSearch(query) {
-            if (query.length < 2) return;
-            
-            // Implement search logic here
-            console.log('Searching for:', query);
-        }
-
-        // ==================== DYNAMIC PAGE LOADERS ====================
-        function loadCompaniesPage() {
-            const content = `
-                <div class="page-header">
-                    <h1 class="page-title">Gestão de Empresas</h1>
-                    <div class="breadcrumb">
-                        <span class="breadcrumb-item">FatorR Pro</span>
-                        <span class="breadcrumb-separator">›</span>
-                        <span class="breadcrumb-item breadcrumb-active">Empresas</span>
-                    </div>
-                </div>
-
-                <div class="mb-xl">
-                    <button class="btn btn-primary" onclick="openAddCompanyModal()">
-                        <i class="fas fa-plus"></i>
-                        Nova Empresa
-                    </button>
-                    <button class="btn btn-secondary" onclick="importCompanies()">
-                        <i class="fas fa-file-import"></i>
-                        Importar CSV
-                    </button>
-                </div>
-
-                <div class="calculator-card">
-                    <div class="calculator-body">
-                        <div class="table-wrapper">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>CNPJ</th>
-                                        <th>Razão Social</th>
-                                        <th>Atividade</th>
-                                        <th>Fator R Atual</th>
-                                        <th>Status</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="companies-table">
-                                    ${AppState.companies.map(company => `
-                                        <tr>
-                                            <td>${company.cnpj || '-'}</td>
-                                            <td>${company.name || '-'}</td>
-                                            <td>${company.activity || '-'}</td>
-                                            <td>${company.factorR || '0'}%</td>
-                                            <td>
-                                                <span class="factor-status ${company.factorR >= 28 ? 'success' : 'danger'}">
-                                                    ${company.factorR >= 28 ? 'Anexo III' : 'Anexo V'}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-secondary" onclick="viewCompany(${company.id})">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-primary" onclick="editCompany(${company.id})">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger" onclick="deleteCompany(${company.id})">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                            ${AppState.companies.length === 0 ? 
-                                '<div class="text-center mt-lg"><p>Nenhuma empresa cadastrada</p><button class="btn btn-primary mt-md" onclick="openAddCompanyModal()">Adicionar Primeira Empresa</button></div>' : 
-                                ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('page-content').innerHTML = content;
-        }
-
-        function loadReportsPage() {
-            const content = `
-                <div class="page-header">
-                    <h1 class="page-title">Central de Relatórios</h1>
-                    <div class="breadcrumb">
-                        <span class="breadcrumb-item">FatorR Pro</span>
-                        <span class="breadcrumb-separator">›</span>
-                        <span class="breadcrumb-item breadcrumb-active">Relatórios</span>
-                    </div>
-                </div>
-
-                <div class="stats-grid mb-xl">
-                    <div class="stat-card" style="cursor: pointer;" onclick="generateMonthlyReport()">
-                        <div class="stat-header">
-                            <div class="stat-title">Relatório Mensal</div>
-                            <div class="stat-icon primary">
-                                <i class="fas fa-calendar"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" style="font-size: 1rem;">Gerar Relatório</div>
-                    </div>
-                    
-                    <div class="stat-card" style="cursor: pointer;" onclick="generateQuarterlyReport()">
-                        <div class="stat-header">
-                            <div class="stat-title">Relatório Trimestral</div>
-                            <div class="stat-icon success">
-                                <i class="fas fa-chart-bar"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" style="font-size: 1rem;">Gerar Relatório</div>
-                    </div>
-                    
-                    <div class="stat-card" style="cursor: pointer;" onclick="generateAnnualReport()">
-                        <div class="stat-header">
-                            <div class="stat-title">Relatório Anual</div>
-                            <div class="stat-icon warning">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" style="font-size: 1rem;">Gerar Relatório</div>
-                    </div>
-                    
-                    <div class="stat-card" style="cursor: pointer;" onclick="generateComparativeReport()">
-                        <div class="stat-header">
-                            <div class="stat-title">Análise Comparativa</div>
-                            <div class="stat-icon danger">
-                                <i class="fas fa-balance-scale"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" style="font-size: 1rem;">Gerar Relatório</div>
-                    </div>
-                </div>
-
-                <div class="calculator-card">
-                    <div class="calculator-header">
-                        <h3 class="calculator-title">Relatórios Personalizados</h3>
-                    </div>
-                    <div class="calculator-body">
-                        <p>Selecione um tipo de relatório acima para gerar ou configure um relatório personalizado:</p>
-                        
-                        <div class="form-grid mt-lg">
-                            <div class="form-group">
-                                <label class="form-label">Período Inicial</label>
-                                <input type="month" class="form-input" id="report-start">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Período Final</label>
-                                <input type="month" class="form-input" id="report-end">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Tipo de Relatório</label>
-                                <select class="form-select" id="report-type">
-                                    <option value="detailed">Detalhado</option>
-                                    <option value="summary">Resumido</option>
-                                    <option value="comparative">Comparativo</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Formato</label>
-                                <select class="form-select" id="report-format">
-                                    <option value="pdf">PDF</option>
-                                    <option value="excel">Excel</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="btn-group mt-lg">
-                            <button class="btn btn-primary" onclick="generateCustomReport()">
-                                <i class="fas fa-cog"></i>
-                                Gerar Relatório Personalizado
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('page-content').innerHTML = content;
-        }
-
-        // Implement other page loaders similarly...
-
-        // ==================== COMPANY MANAGEMENT ====================
-        function openAddCompanyModal() {
-            showModal('Adicionar Empresa', `
-                <form id="add-company-form">
-                    <div class="form-group mb-md">
-                        <label class="form-label">CNPJ <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="modal-cnpj" required onkeyup="formatCNPJ(this)" maxlength="18">
-                    </div>
-                    <div class="form-group mb-md">
-                        <label class="form-label">Razão Social <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="modal-name" required>
-                    </div>
-                    <div class="form-group mb-md">
-                        <label class="form-label">Atividade <span class="required">*</span></label>
-                        <select class="form-select" id="modal-activity" required>
-                            <option value="">Selecione...</option>
-                            <option value="comercio">Comércio</option>
-                            <option value="industria">Indústria</option>
-                            <option value="servicos">Serviços</option>
-                        </select>
-                    </div>
-                    <div class="form-group mb-md">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="modal-email">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Telefone</label>
-                        <input type="tel" class="form-input" id="modal-phone">
-                    </div>
-                </form>
-            `, addCompany);
-        }
-
-        function addCompany() {
-            const cnpj = document.getElementById('modal-cnpj').value;
-            const name = document.getElementById('modal-name').value;
-            const activity = document.getElementById('modal-activity').value;
-            const email = document.getElementById('modal-email').value;
-            const phone = document.getElementById('modal-phone').value;
-            
-            if (!cnpj || !name || !activity) {
-                showNotification('Preencha os campos obrigatórios', 'warning');
-                return;
-            }
-
-            if (!validateCNPJ(cnpj)) {
-                showNotification('CNPJ inválido', 'warning');
-                return;
-            }
-            
-            const company = {
-                id: Date.now(),
-                cnpj: cnpj,
-                name: name,
-                activity: activity,
-                email: email,
-                phone: phone,
-                factorR: 0,
-                createdAt: new Date().toISOString()
-            };
-            
-            AppState.companies.push(company);
-            saveToLocalStorage();
-            loadCompaniesPage();
-            showNotification('Empresa adicionada com sucesso!', 'success');
-        }
-
-        function viewCompany(id) {
-            const company = AppState.companies.find(c => c.id === id);
-            if (company) {
-                showModal(`Empresa: ${company.name}`, `
-                    <div class="mb-md">
-                        <strong>CNPJ:</strong> ${company.cnpj}<br>
-                        <strong>Atividade:</strong> ${company.activity}<br>
-                        <strong>Email:</strong> ${company.email || 'Não informado'}<br>
-                        <strong>Telefone:</strong> ${company.phone || 'Não informado'}<br>
-                        <strong>Cadastrada em:</strong> ${new Date(company.createdAt).toLocaleDateString('pt-BR')}
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-primary" onclick="editCompany(${company.id})">Editar</button>
-                        <button class="btn btn-secondary" onclick="closeModal()">Fechar</button>
-                    </div>
-                `);
-            }
-        }
-
-        function editCompany(id) {
-            const company = AppState.companies.find(c => c.id === id);
-            if (company) {
-                showModal('Editar Empresa', `
-                    <form id="edit-company-form">
-                        <div class="form-group mb-md">
-                            <label class="form-label">CNPJ</label>
-                            <input type="text" class="form-input" value="${company.cnpj}" readonly>
-                        </div>
-                        <div class="form-group mb-md">
-                            <label class="form-label">Razão Social</label>
-                            <input type="text" class="form-input" id="edit-name" value="${company.name}" required>
-                        </div>
-                        <div class="form-group mb-md">
-                            <label class="form-label">Atividade</label>
-                            <select class="form-select" id="edit-activity" required>
-                                <option value="comercio" ${company.activity === 'comercio' ? 'selected' : ''}>Comércio</option>
-                                <option value="industria" ${company.activity === 'industria' ? 'selected' : ''}>Indústria</option>
-                                <option value="servicos" ${company.activity === 'servicos' ? 'selected' : ''}>Serviços</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-md">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-input" id="edit-email" value="${company.email || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Telefone</label>
-                            <input type="tel" class="form-input" id="edit-phone" value="${company.phone || ''}">
-                        </div>
-                    </form>
-                `, () => updateCompany(id));
-            }
-        }
-
-        function updateCompany(id) {
-            const company = AppState.companies.find(c => c.id === id);
-            if (company) {
-                company.name = document.getElementById('edit-name').value;
-                company.activity = document.getElementById('edit-activity').value;
-                company.email = document.getElementById('edit-email').value;
-                company.phone = document.getElementById('edit-phone').value;
-                
-                saveToLocalStorage();
-                loadCompaniesPage();
-                showNotification('Empresa atualizada com sucesso!', 'success');
-            }
-        }
-
-        function deleteCompany(id) {
-            const company = AppState.companies.find(c => c.id === id);
-            if (company) {
-                showModal('Confirmar Exclusão', `
-                    <p>Tem certeza que deseja excluir a empresa <strong>${company.name}</strong>?</p>
-                    <p>Esta ação não pode ser desfeita.</p>
-                `, () => {
-                    AppState.companies = AppState.companies.filter(c => c.id !== id);
-                    saveToLocalStorage();
-                    loadCompaniesPage();
-                    showNotification('Empresa excluída com sucesso!', 'success');
-                });
-            }
-        }
-
-        function importCompanies() {
-            showNotification('Funcionalidade de importação em desenvolvimento', 'info');
-        }
-
-        // ==================== REPORT GENERATION ====================
-        function generateMonthlyReport() {
-            generateReport('Mensal');
-        }
-
-        function generateQuarterlyReport() {
-            generateReport('Trimestral');
-        }
-
-        function generateAnnualReport() {
-            generateReport('Anual');
-        }
-
-        function generateComparativeReport() {
-            generateReport('Comparativo');
-        }
-
-        function generateCustomReport() {
-            const start = document.getElementById('report-start').value;
-            const end = document.getElementById('report-end').value;
-            const type = document.getElementById('report-type').value;
-            const format = document.getElementById('report-format').value;
-            
-            if (!start || !end) {
-                showNotification('Selecione o período do relatório', 'warning');
-                return;
-            }
-            
-            showNotification(`Relatório personalizado gerado (${start} a ${end})`, 'success');
-        }
-
-        function generateReport(type) {
-            showNotification(`Relatório ${type} gerado com sucesso!`, 'success');
-        }
-
-        // ==================== USER FUNCTIONS ====================
-        function showUserProfile() {
-            showModal('Meu Perfil', `
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Nome</label>
-                        <input type="text" class="form-input" value="João Silva" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" value="joao.silva@email.com" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tipo de Conta</label>
-                        <input type="text" class="form-input" value="Contador Premium" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Data de Cadastro</label>
-                        <input type="text" class="form-input" value="15/03/2024" readonly>
-                    </div>
-                </div>
-            `);
-        }
-
-        function logout() {
-            showModal('Sair do Sistema', `
-                <p>Tem certeza que deseja sair do sistema?</p>
-            `, () => {
-                showNotification('Você saiu do sistema', 'info');
-                setTimeout(() => {
-                    // Redirect to login page or refresh
-                    window.location.reload();
-                }, 2000);
-            });
-        }
-
-        // ==================== OTHER PAGE LOADERS ====================
-        function loadSimulationsPage() {
-            document.getElementById('page-content').innerHTML = `
-                <div class="page-header">
-                    <h1 class="page-title">Simulador de Cenários</h1>
-                    <div class="breadcrumb">
-                        <span class="breadcrumb-item">FatorR Pro</span>
-                        <span class="breadcrumb-separator">›</span>
-                        <span class="breadcrumb-item breadcrumb-active">Simulações</span>
-                    </div>
-                </div>
-                <p>Página de simulações carregada. Use a aba "Simulação" na calculadora para funcionalidades completas.</p>
-            `;
-        }
-
-        function loadHistoryPage() {
-            document.getElementById('page-content').innerHTML = `
-                <div class="page-header">
-                    <h1 class="page-title">Histórico de Cálculos</h1>
-                    <div class="breadcrumb">
-                        <span class="breadcrumb-item">FatorR Pro</span>
-                        <span class="breadcrumb-separator">›</span>
-                        <span class="breadcrumb-item breadcrumb-active">Histórico</span>
-                    </div>
-                </div>
-                <p>Histórico de cálculos será implementado em breve.</p>
-            `;
-        }
-
-        function loadComparisonsPage() {
-            document.getElementById('page-content').innerHTML = `
-                <div class="page-header">
-                    <h1 class="page-title">Análise Comparativa</h1>
-                    <div class="breadcrumb">
-                        <span class="breadcrumb-item">FatorR Pro</span>
-                        <span class="breadcrumb-separator">›</span>
-                        <span class="breadcrumb-item breadcrumb-active">Comparativos</span>
-                    </div>
-                </div>
-                <p>Análise comparativa será implementada em breve.</p>
-            `;
-        }
-
-        function loadSettingsPage() {
-            document.getElementById('page-content').innerHTML = `
-                <div class="page-header">
-                    <h1 class="page-title">Configurações do Sistema</h1>
-                    <div class="breadcrumb">
-                        <span class="breadcrumb-item">FatorR Pro</span>
-                        <span class="breadcrumb-separator">›</span>
-                        <span class="breadcrumb-item breadcrumb-active">Configurações</span>
-                    </div>
-                </div>
-                <p>Configurações do sistema serão implementadas em breve.</p>
-            `;
-        }
-
-        function loadHelpPage() {
-            document.getElementById('page-content').innerHTML = `
-                <div class="page-header">
-                    <h1 class="page-title">Central de Ajuda</h1>
-                    <div class="breadcrumb">
-                        <span class="breadcrumb-item">FatorR Pro</span>
-                        <span class="breadcrumb-separator">›</span>
-                        <span class="breadcrumb-item breadcrumb-active">Ajuda</span>
-                    </div>
-                </div>
-                <p>Central de ajuda será implementada em breve.</p>
-            `;
-        }
-
-        // ==================== TAX TABLES ====================
-        const TaxTables = {
-            anexo1: [ // Comércio
-                { limit: 180000, rate: 4.00, deduction: 0 },
-                { limit: 360000, rate: 7.30, deduction: 5940 },
-                { limit: 720000, rate: 9.50, deduction: 13860 },
-                { limit: 1800000, rate: 10.70, deduction: 22500 },
-                { limit: 3600000, rate: 14.30, deduction: 87300 },
-                { limit: 4800000, rate: 19.00, deduction: 378000 }
-            ],
-            anexo2: [ // Indústria
-                { limit: 180000, rate: 4.50, deduction: 0 },
-                { limit: 360000, rate: 7.80, deduction: 5940 },
-                { limit: 720000, rate: 10.00, deduction: 13860 },
-                { limit: 1800000, rate: 11.20, deduction: 22500 },
-                { limit: 3600000, rate: 14.70, deduction: 85500 },
-                { limit: 4800000, rate: 30.00, deduction: 720000 }
-            ],
-            anexo3: [ // Serviços (R >= 28%)
-                { limit: 180000, rate: 6.00, deduction: 0 },
-                { limit: 360000, rate: 11.20, deduction: 9360 },
-                { limit: 720000, rate: 13.50, deduction: 17640 },
-                { limit: 1800000, rate: 16.00, deduction: 35640 },
-                { limit: 3600000, rate: 21.00, deduction: 125640 },
-                { limit: 4800000, rate: 33.00, deduction: 648000 }
-            ],
-            anexo4: [ // Serviços Específicos
-                { limit: 180000, rate: 4.50, deduction: 0 },
-                { limit: 360000, rate: 9.00, deduction: 8100 },
-                { limit: 720000, rate: 10.20, deduction: 12420 },
-                { limit: 1800000, rate: 14.00, deduction: 39780 },
-                { limit: 3600000, rate: 22.00, deduction: 183780 },
-                { limit: 4800000, rate: 33.00, deduction: 828000 }
-            ],
-            anexo5: [ // Serviços (R < 28%)
-                { limit: 180000, rate: 15.50, deduction: 0 },
-                { limit: 360000, rate: 18.00, deduction: 4500 },
-                { limit: 720000, rate: 19.50, deduction: 9900 },
-                { limit: 1800000, rate: 20.50, deduction: 17100 },
-                { limit: 3600000, rate: 23.00, deduction: 62100 },
-                { limit: 4800000, rate: 30.50, deduction: 540000 }
-            ]
-        };
-
-        // ==================== ERROR HANDLING ====================
-        window.addEventListener('error', function(e) {
-            console.error('Erro capturado:', e.error);
-            showNotification('Ocorreu um erro inesperado', 'danger');
-        });
-
-        // ==================== INITIALIZE ON LOAD ====================
-        // Set current date for period input
-        const periodInput = document.getElementById('period');
-        if (periodInput) {
-            const today = new Date();
-            periodInput.value = today.toISOString().slice(0, 7);
-        }
-
-        // Handle browser back/forward buttons
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.page) {
-                navigateTo(event.state.page);
-            }
-        });
-
-        // Initialize with dashboard
-        navigateTo('dashboard');
-    </script>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Processando...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
 </body>
 </html>
